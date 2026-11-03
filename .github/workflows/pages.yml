@@ -1,0 +1,39 @@
+# Publishes the V2B Trade Journal site with GitHub Actions.
+# Set the repo's Settings -> Pages -> Source to "GitHub Actions".
+#
+# Trade uploads (index.html, <name>/data/...) publish the site.
+# Log uploads (<name>/logs/...) are ignored here, so the every-5-minute log
+# updates never use up builds; the page reads logs straight from the repo.
+name: Publish V2B pages
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "*/logs/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Only the newest commit matters: a newer upload cancels an older deploy.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4

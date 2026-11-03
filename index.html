@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V2B Trade Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column journal — date strip, day summary, equity curve + sessions, trade ledger */
+:root {
+  --bg: #f3f4f1;
+  --surface: #ffffff;
+  --ink: #1b2027;
+  --muted: #5e6670;
+  --line: #dcdfd9;
+  --accent: #2f5bd3;
+  --profit: #13805a;
+  --profit-bg: #e2f3ea;
+  --loss: #c2402f;
+  --loss-bg: #f8e4e0;
+  --flat: #9a6b00;
+  --flat-bg: #f6edd3;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161c; --surface: #1a2028; --ink: #e6e9ee; --muted: #98a1ad; --line: #2b333e;
+    --accent: #7f9cf5; --profit: #4cc38a; --profit-bg: #173528; --loss: #f07a68; --loss-bg: #3a201c;
+    --flat: #e2b54a; --flat-bg: #3a3017; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161c; --surface: #1a2028; --ink: #e6e9ee; --muted: #98a1ad; --line: #2b333e;
+  --accent: #7f9cf5; --profit: #4cc38a; --profit-bg: #173528; --loss: #f07a68; --loss-bg: #3a201c;
+  --flat: #e2b54a; --flat-bg: #3a3017; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 48px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.pos { color: var(--profit); } .neg { color: var(--loss); } .zero { color: var(--muted); }
+
+header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.eyebrow { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
+.sub { color: var(--muted); font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.badge { font-family: var(--font-data); font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.badge.live { color: var(--profit); border-color: var(--profit); }
+.badge.sample { color: var(--flat); border-color: var(--flat); }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button, input[type="date"], select {
+  font: inherit; font-size: 0.9rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible, select:focus-visible, .day:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: 0.4; cursor: default; border-color: var(--line); }
+input[type="date"] { font-family: var(--font-data); }
+select { cursor: pointer; font-weight: 500; }
+.trader { display: flex; align-items: center; gap: 8px; }
+.trader label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+.days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.day {
+  flex: 0 0 auto; min-width: 104px; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--surface); cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px;
+}
+.day .d { font-size: 0.78rem; color: var(--muted); }
+.day .p { font-family: var(--font-data); font-size: 0.9rem; }
+.day[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.stat { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.stat .k { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.stat .v { font-family: var(--font-data); font-size: 1.45rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.stat .v.big { font-size: 1.9rem; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.chip { font-family: var(--font-data); font-size: 0.75rem; font-weight: 500; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+.chip.TP { background: var(--profit-bg); color: var(--profit); }
+.chip.BE { background: var(--flat-bg); color: var(--flat); }
+.chip.SL { background: var(--loss-bg); color: var(--loss); }
+.chip.EXIT { background: var(--line); color: var(--muted); }
+.dir { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; }
+.dir.Long { color: var(--profit); } .dir.Short { color: var(--loss); }
+
+.grid2 { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart text { font-family: var(--font-data); font-size: 11px; fill: var(--muted); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+td.r, th.r { text-align: right; }
+.scroll { overflow-x: auto; }
+.empty { color: var(--muted); padding: 28px 8px; text-align: center; }
+.note { color: var(--muted); font-size: 0.82rem; }
+</style>
+<style>
+.list { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+.list a { display: block; padding: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); text-decoration: none; font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+.list a:hover { border-color: var(--accent); }
+.list a span { display: block; font-family: var(--font-data); font-weight: 400; font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header><div><div class="eyebrow">V2B Trade Journal</div><h1>Traders</h1></div></header>
+  <div class="list" id="list"><p class="note">Loading…</p></div>
+</div>
+<script>
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+fetch("users.json?t=" + Date.now(), { cache: "no-store" })
+  .then((r) => (r.ok ? r.json() : { users: [] }))
+  .catch(() => ({ users: [] }))
+  .then((u) => {
+    const users = (u.users || []).slice().sort();
+    document.getElementById("list").innerHTML = users.length
+      ? users.map((n) => `<a href="./${encodeURIComponent(n)}/">${esc(n)}<span>/v2b/${esc(n)}</span></a>`).join("")
+      : `<p class="note">No traders yet. A trader appears here after V2B uploads their first trade.</p>`;
+  });
+</script>
+</body>
+</html>
