@@ -17,3 +17,4 @@
 2026-11-03 12:30:00  Break-even: 38.2% reached, stop moved to 28218
 2026-11-03 12:40:00  No signal: NQ 12-26 volume 1079 <= previous 1198
 2026-11-03 12:45:00  No signal: NQ 12-26 volume 698 <= previous 1079
+2026-11-03 12:50:00  SHORT 10 @ 28232.5 | stop 28247 | TP 1R 28218 | risk $290.00
