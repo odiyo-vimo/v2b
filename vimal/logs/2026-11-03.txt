@@ -66,3 +66,4 @@
 2026-11-03 15:45:00  LONG 5 @ 28328 | stop 28299.75 | TP 1R 28356.25 | risk $282.50
 2026-11-03 15:45:00  Trade closed: TP +$282.50 (Profit target @ 28356.25)
 2026-11-03 15:50:00  No signal: NQ 12-26 volume 6783 <= previous 6891
+2026-11-03 15:55:00  No signal: NQ 12-26 volume 5077 <= previous 6783
