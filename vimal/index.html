@@ -1,0 +1,599 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>V2B Trade Journal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column journal — date strip, day summary, equity curve + sessions, trade ledger */
+:root {
+  --bg: #f3f4f1;
+  --surface: #ffffff;
+  --ink: #1b2027;
+  --muted: #5e6670;
+  --line: #dcdfd9;
+  --accent: #2f5bd3;
+  --profit: #13805a;
+  --profit-bg: #e2f3ea;
+  --loss: #c2402f;
+  --loss-bg: #f8e4e0;
+  --flat: #9a6b00;
+  --flat-bg: #f6edd3;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", Roboto, sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161c; --surface: #1a2028; --ink: #e6e9ee; --muted: #98a1ad; --line: #2b333e;
+    --accent: #7f9cf5; --profit: #4cc38a; --profit-bg: #173528; --loss: #f07a68; --loss-bg: #3a201c;
+    --flat: #e2b54a; --flat-bg: #3a3017; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161c; --surface: #1a2028; --ink: #e6e9ee; --muted: #98a1ad; --line: #2b333e;
+  --accent: #7f9cf5; --profit: #4cc38a; --profit-bg: #173528; --loss: #f07a68; --loss-bg: #3a201c;
+  --flat: #e2b54a; --flat-bg: #3a3017; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 24px 48px;
+}
+.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+h1, h2 { font-family: var(--font-display); margin: 0; text-wrap: balance; }
+h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.01em; }
+h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+.num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.pos { color: var(--profit); } .neg { color: var(--loss); } .zero { color: var(--muted); }
+
+header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.eyebrow { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
+.sub { color: var(--muted); font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
+.badge { font-family: var(--font-data); font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.badge.live { color: var(--profit); border-color: var(--profit); }
+.badge.sample { color: var(--flat); border-color: var(--flat); }
+.titleblock { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.back { align-self: flex-start; font-size: 0.85rem; color: var(--accent); text-decoration: none; margin-bottom: 6px; }
+.back:hover { text-decoration: underline; }
+.back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.refresh { margin-top: 4px; }
+.refresh .num { font-size: 0.8rem; }
+button.small { font-size: 0.8rem; padding: 3px 10px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+button, input[type="date"], select {
+  font: inherit; font-size: 0.9rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line);
+  border-radius: 6px; padding: 7px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--accent); }
+button:focus-visible, input:focus-visible, select:focus-visible, .day:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:disabled { opacity: 0.4; cursor: default; border-color: var(--line); }
+input[type="date"] { font-family: var(--font-data); }
+select { cursor: pointer; font-weight: 500; }
+.trader { display: flex; align-items: center; gap: 8px; }
+.trader label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+.days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+.day {
+  flex: 0 0 auto; min-width: 104px; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--line);
+  background: var(--surface); cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px;
+}
+.day .d { font-size: 0.78rem; color: var(--muted); }
+.day .p { font-family: var(--font-data); font-size: 0.9rem; }
+.day[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.stat { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.stat .k { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.stat .v { font-family: var(--font-data); font-size: 1.45rem; font-weight: 500; font-variant-numeric: tabular-nums; }
+.stat .v.big { font-size: 1.9rem; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.chip { font-family: var(--font-data); font-size: 0.75rem; font-weight: 500; padding: 2px 8px; border-radius: 4px; white-space: nowrap; }
+.chip.TP { background: var(--profit-bg); color: var(--profit); }
+.chip.BE { background: var(--flat-bg); color: var(--flat); }
+.chip.SL { background: var(--loss-bg); color: var(--loss); }
+.chip.EXIT { background: var(--line); color: var(--muted); }
+.dir { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; }
+.dir.Long { color: var(--profit); } .dir.Short { color: var(--loss); }
+
+.grid2 { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.chart svg { width: 100%; height: auto; display: block; }
+.chart text { font-family: var(--font-data); font-size: 11px; fill: var(--muted); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 500; text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+td.r, th.r { text-align: right; }
+.scroll { overflow-x: auto; }
+.empty { color: var(--muted); padding: 28px 8px; text-align: center; }
+.note { color: var(--muted); font-size: 0.82rem; }
+
+.views { display: inline-flex; align-self: flex-start; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.views button { border: 0; border-radius: 0; padding: 8px 18px; background: var(--surface); font-weight: 500; }
+.views button + button { border-left: 1px solid var(--line); }
+.views button[aria-selected="true"] { background: var(--ink); color: var(--bg); }
+.loghead { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; }
+.check { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--muted); cursor: pointer; }
+.log { list-style: none; margin: 0; padding: 0; font-family: var(--font-data); font-size: 0.84rem; font-variant-numeric: tabular-nums; }
+.log li { display: grid; grid-template-columns: 4.2em minmax(0, 1fr); gap: 12px; padding: 7px 4px; border-bottom: 1px solid var(--line); }
+.log li:last-child { border-bottom: none; }
+.log .t { color: var(--muted); }
+.log .m { overflow-wrap: anywhere; }
+.log li.order .m { color: var(--accent); font-weight: 500; }
+.log li.tp .m { color: var(--profit); font-weight: 500; }
+.log li.sl .m { color: var(--loss); font-weight: 500; }
+.log li.be .m { color: var(--flat); }
+.log li.quiet .m { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="titleblock">
+      <a class="back" href="../">← All</a>
+      <div class="eyebrow">V2B Trade Journal</div>
+      <h1 id="trader">Trader</h1>
+      <div class="sub">
+        <span id="instrument">MNQ · 5 minute</span>
+        <span id="updated">Loading…</span>
+        <span id="mode" class="badge">…</span>
+      </div>
+      <div class="sub refresh">
+        <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
+        <span id="refreshInfo" class="num"></span>
+        <button type="button" id="refreshNow" class="small">Refresh now</button>
+      </div>
+    </div>
+    <div class="controls">
+      <button id="prev" type="button" aria-label="Previous trading day">◀ Prev</button>
+      <input id="date" type="date" aria-label="Choose a date">
+      <button id="next" type="button" aria-label="Next trading day">Next ▶</button>
+      <button id="today" type="button">Latest</button>
+    </div>
+  </header>
+
+  <div class="days" id="days" role="group" aria-label="Recent trading days"></div>
+
+  <div class="views" role="tablist" aria-label="View">
+    <button type="button" role="tab" id="tabTrades" aria-selected="true" aria-controls="tradesView">Trades</button>
+    <button type="button" role="tab" id="tabLogs" aria-selected="false" aria-controls="logsView">Logs</button>
+  </div>
+
+  <div id="tradesView" class="wrap" style="gap: 20px;">
+  <section class="summary" id="summary" aria-label="Day summary"></section>
+
+  <div class="grid2">
+    <section class="panel chart">
+      <h2>Cumulative P&amp;L</h2>
+      <div id="chart"></div>
+    </section>
+    <section class="panel">
+      <h2>By session</h2>
+      <div class="scroll"><table id="sessions"></table></div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <h2 id="tradesTitle">Trades</h2>
+    <div class="scroll"><table id="trades"></table></div>
+  </section>
+  </div>
+
+  <section class="panel" id="logsView" hidden>
+    <div class="loghead">
+      <h2 id="logTitle">Decision log</h2>
+      <label class="check"><input type="checkbox" id="hideQuiet"> Hide “no signal” lines</label>
+    </div>
+    <div class="note" id="logStatus">Loading…</div>
+    <ol class="log" id="log" aria-live="polite"></ol>
+  </section>
+
+  <p class="note" id="footnote"></p>
+</div>
+
+<script>
+// ---- Where the data lives -------------------------------------------------
+// This page is published at /v2b/<trader>/. V2B uploads that trader's files to
+// the repo: <trader>/data/index.json and data/YYYY-MM-DD.json after each trade,
+// and <trader>/logs/YYYY-MM-DD.txt after each bar. Those uploads don't republish
+// the site; the page reads them straight from the repo through GitHub's API
+// (falling back to GitHub's raw file server if the API's hourly limit is reached).
+// GitHub allows 60 API reads an hour per network; the page checks about 24
+// times an hour (see Auto-refresh below).
+const ON_GITHUB = /\.github\.io$/i.test(location.hostname);
+const BRANCH = "main";
+
+const $ = (id) => document.getElementById(id);
+let days = [];          // [{date, trades, pnl}]
+let selected = null;    // "YYYY-MM-DD"
+let sampleMode = false;
+let timer = null;
+let view = "trades";    // "trades" | "logs"
+const repoCache = {};   // repo path -> { etag, text }
+const dayCache = {};    // date -> { sig, data }
+
+const money = (v) => (v > 0 ? "+$" : v < 0 ? "-$" : "$") + Math.abs(v).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const cls = (v) => (v > 0 ? "pos" : v < 0 ? "neg" : "zero");
+const fmtDay = (d) => new Date(d + "T12:00:00").toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function fileUrl(path) { return `${path}?t=${Date.now()}`; }   // the timestamp skips GitHub's cache
+function traderFromPath() {
+  const parts = location.pathname.split("/").filter(Boolean);
+  if (parts.length && /\.html?$/i.test(parts[parts.length - 1])) parts.pop();
+  return parts.length ? decodeURIComponent(parts[parts.length - 1]) : "";
+}
+async function getJson(path) {
+  const res = await fetch(fileUrl(path), { cache: "no-store" });
+  if (!res.ok) throw new Error(res.status);
+  return res.json();
+}
+
+// ---- Sample data (shown only when no real data can be loaded) -------------
+function sampleData(seedStart) {
+  let seed = seedStart; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const out = {}; const list = [];
+  const d = new Date(); let made = 0;
+  while (made < 7) {
+    if (d.getDay() !== 0 && d.getDay() !== 6) {
+      const date = d.toISOString().slice(0, 10);
+      const trades = []; let cum = 0; let price = 28650 + rnd() * 200;
+      const n = 3 + Math.floor(rnd() * 5);
+      for (let i = 0; i < n; i++) {
+        const london = i < 2;
+        const startMin = london ? 8 * 60 + 5 + Math.floor(rnd() * 170) : 14 * 60 + 35 + Math.floor(rnd() * 140);
+        const hold = 5 + Math.floor(rnd() * 40);
+        const t = (m) => `${date} ${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}:00`;
+        const dir = rnd() < 0.5 ? "Long" : "Short"; const sgn = dir === "Long" ? 1 : -1;
+        const riskPts = Math.round((6 + rnd() * 10) * 4) / 4; const qty = Math.max(2, Math.floor(250 / (riskPts * 2)));
+        const roll = rnd(); const result = roll < 0.38 ? "TP" : roll < 0.68 ? "BE" : "SL";
+        const entry = Math.round(price * 4) / 4;
+        const movePts = result === "TP" ? Math.round(riskPts * (1.6 + rnd() * 0.6) * 4) / 4 : result === "BE" ? 1 : -riskPts;
+        const exit = entry + sgn * movePts; const pnl = movePts * qty * 2; cum += pnl;
+        trades.push({ entry_time: t(startMin), exit_time: t(startMin + hold), session: london ? "London" : "NY AM", direction: dir,
+          contracts: qty, entry, exit, stop: entry - sgn * riskPts, target: entry + sgn * Math.round(riskPts * 2 * 4) / 4,
+          result, pnl_points: movePts, pnl, risk: riskPts * qty * 2, r: pnl / (riskPts * qty * 2), cum_pnl: cum, account: "Sim101" });
+        price += (rnd() - 0.5) * 60;
+      }
+      out[date] = { date, instrument: "MNQ 12-26", updated: `${date} 20:45:00`, trades };
+      list.push({ date, trades: n, pnl: cum }); made++;
+    }
+    d.setDate(d.getDate() - 1);
+  }
+  return { index: { days: list.reverse(), updated: list[list.length - 1]?.date }, days: out };
+}
+
+
+// ---- Loading ------------------------------------------------------------------
+// Reads a file from the repo. Returns its text, or null if it doesn't exist yet.
+async function readRepoFile(path) {
+  const info = repoInfo();
+  if (!info) throw new Error("not on GitHub");
+  const cached = repoCache[path];
+  try {
+    const headers = { Accept: "application/vnd.github.raw+json" };
+    if (cached && cached.etag) headers["If-None-Match"] = cached.etag;
+    const res = await fetch(`https://api.github.com/repos/${info.owner}/${info.repo}/contents/${path}?ref=${BRANCH}`, { headers, cache: "no-store" });
+    if (res.status === 304 && cached) return cached.text;
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(String(res.status));   // e.g. 403 when the hourly limit is used up
+    const text = await res.text();
+    repoCache[path] = { etag: res.headers.get("ETag"), text };
+    return text;
+  } catch {
+    const res = await fetch(`https://raw.githubusercontent.com/${info.owner}/${info.repo}/${BRANCH}/${path}?t=${Date.now()}`, { cache: "no-store" });
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(String(res.status));
+    return res.text();
+  }
+}
+const traderPath = () => (repoInfo() || {}).trader || traderFromPath();
+
+async function loadIndex() {
+  try {
+    const text = await readRepoFile(`${traderPath()}/data/index.json`);
+    sampleMode = false;
+    days = text ? (JSON.parse(text).days || []).slice().sort((a, b) => a.date.localeCompare(b.date)) : [];
+  } catch {
+    // Off GitHub (this preview) show sample trades; on GitHub keep what's on screen and retry later.
+    sampleMode = !ON_GITHUB;
+    if (sampleMode) days = sampleFor().index.days;
+  }
+  $("mode").textContent = sampleMode ? "Sample data" : "Powered by V2B";
+  $("mode").className = "badge " + (sampleMode ? "sample" : "live");
+}
+let SAMPLE = null;
+function sampleFor() { return SAMPLE || (SAMPLE = sampleData(7)); }
+// A day's file is only downloaded again when its trade count or P&L in the index changes.
+async function loadDay(date) {
+  if (sampleMode) return sampleFor().days[date] || { date, trades: [] };
+  const entry = days.find((d) => d.date === date);
+  if (!entry) return { date, trades: [] };
+  const sig = `${entry.trades}|${entry.pnl}`;
+  if (dayCache[date] && dayCache[date].sig === sig) return dayCache[date].data;
+  try {
+    const text = await readRepoFile(`${traderPath()}/data/${date}.json`);
+    const data = text ? JSON.parse(text) : { date, trades: [] };
+    dayCache[date] = { sig, data };
+    return data;
+  } catch {
+    return dayCache[date] ? dayCache[date].data : { date, trades: [] };
+  }
+}
+
+// ---- Rendering ----------------------------------------------------------------
+function renderDays() {
+  const recent = days.slice(-12).reverse();
+  $("days").innerHTML = recent.map((d) =>
+    `<button type="button" class="day" data-date="${d.date}" aria-pressed="${d.date === selected}">
+       <span class="d">${fmtDay(d.date)}</span>
+       <span class="p ${cls(d.pnl)}">${money(d.pnl)}</span>
+       <span class="d">${d.trades} trade${d.trades === 1 ? "" : "s"}</span>
+     </button>`).join("");
+  $("days").querySelectorAll(".day").forEach((b) => b.addEventListener("click", () => select(b.dataset.date)));
+  $("prev").disabled = !days.some((d) => d.date < selected);
+  $("next").disabled = !days.some((d) => d.date > selected);
+  if (days.length) $("date").min = days[0].date;
+  $("date").max = new Date().toISOString().slice(0, 10);
+}
+
+function renderSummary(trades) {
+  const n = trades.length;
+  const count = (r) => trades.filter((t) => t.result === r).length;
+  const tp = count("TP"), be = count("BE"), sl = count("SL");
+  const pnl = trades.reduce((s, t) => s + t.pnl, 0);
+  const rs = trades.filter((t) => isFinite(t.r)).map((t) => t.r);
+  const avgR = rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : 0;
+  const win = n ? (tp / n) * 100 : 0; const winX = tp + sl ? (tp / (tp + sl)) * 100 : 0;
+  $("summary").innerHTML = `
+    <div class="stat"><span class="k">Day P&amp;L</span><span class="v big ${cls(pnl)}">${money(pnl)}</span></div>
+    <div class="stat"><span class="k">Trades</span><span class="v">${n}</span>
+      <span class="chips"><span class="chip TP">TP ${tp}</span><span class="chip BE">BE ${be}</span><span class="chip SL">SL ${sl}</span></span></div>
+    <div class="stat"><span class="k">Win rate</span><span class="v">${n ? win.toFixed(0) + "%" : "–"}</span><span class="note">${tp + sl ? winX.toFixed(0) + "% excl. BE" : "&nbsp;"}</span></div>
+    <div class="stat"><span class="k">Average R</span><span class="v ${cls(avgR)}">${n ? (avgR >= 0 ? "+" : "") + avgR.toFixed(2) + "R" : "–"}</span></div>`;
+}
+
+function renderChart(trades) {
+  if (!trades.length) { $("chart").innerHTML = `<div class="empty">No trades on this day.</div>`; return; }
+  const W = 640, H = 220, L = 64, R = 14, T = 14, B = 26;
+  const pts = [0, ...trades.map((t) => t.cum_pnl ?? 0)];
+  let lo = Math.min(0, ...pts), hi = Math.max(0, ...pts);
+  if (hi - lo < 1) { hi += 50; lo -= 50; }
+  const pad = (hi - lo) * 0.1; lo -= pad; hi += pad;
+  const x = (i) => L + (i / (pts.length - 1)) * (W - L - R);
+  const y = (v) => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  let d = `M${x(0)},${y(0)}`;
+  pts.forEach((v, i) => { if (i) d += ` H${x(i)} V${y(v)}`; });
+  const last = pts[pts.length - 1];
+  const lineCol = last >= 0 ? "var(--profit)" : "var(--loss)";
+  const area = `${d} V${y(0)} H${x(0)} Z`;
+  const ticks = [hi - pad, 0, lo + pad].filter((v, i, a) => a.indexOf(v) === i);
+  const dots = trades.map((t, i) => {
+    const c = t.result === "TP" ? "var(--profit)" : t.result === "SL" ? "var(--loss)" : t.result === "BE" ? "var(--flat)" : "var(--muted)";
+    return `<circle cx="${x(i + 1)}" cy="${y(pts[i + 1])}" r="4.5" fill="${c}" stroke="var(--surface)" stroke-width="1.5"><title>#${i + 1} ${t.result} ${money(t.pnl)}</title></circle>`;
+  }).join("");
+  $("chart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Cumulative P&L through the day, ending at ${money(last)}">
+    ${ticks.map((v) => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)" stroke-width="1" ${v === 0 ? "" : 'stroke-dasharray="3 4"'}/>
+      <text x="${L - 8}" y="${y(v) + 4}" text-anchor="end">${money(Math.round(v))}</text>`).join("")}
+    <path d="${area}" fill="${lineCol}" opacity="0.08"/>
+    <path d="${d}" fill="none" stroke="${lineCol}" stroke-width="2"/>
+    ${dots}
+    <text x="${x(0)}" y="${H - 6}" text-anchor="start">Start</text>
+    <text x="${x(pts.length - 1)}" y="${H - 6}" text-anchor="end">Trade ${trades.length}</text>
+  </svg>`;
+}
+
+function renderSessions(trades) {
+  if (!trades.length) { $("sessions").innerHTML = `<tr><td class="empty">–</td></tr>`; return; }
+  const by = {};
+  trades.forEach((t) => { const k = t.session || "Other"; (by[k] = by[k] || { n: 0, tp: 0, pnl: 0 }); by[k].n++; by[k].pnl += t.pnl; if (t.result === "TP") by[k].tp++; });
+  const order = ["Asia", "London", "NY AM", "NY PM"];
+  const keys = Object.keys(by).sort((a, b) => (order.indexOf(a) + 99 * (order.indexOf(a) < 0)) - (order.indexOf(b) + 99 * (order.indexOf(b) < 0)));
+  $("sessions").innerHTML = `<thead><tr><th>Session</th><th class="r">Trades</th><th class="r">TP</th><th class="r">P&amp;L</th></tr></thead><tbody>` +
+    keys.map((k) => `<tr><td>${esc(k)}</td><td class="r num">${by[k].n}</td><td class="r num">${by[k].tp}</td><td class="r num ${cls(by[k].pnl)}">${money(by[k].pnl)}</td></tr>`).join("") + `</tbody>`;
+}
+
+function renderTrades(trades) {
+  $("tradesTitle").textContent = `Trades · ${fmtDay(selected)}`;
+  if (!trades.length) { $("trades").innerHTML = `<tr><td class="empty">No trades logged on this date.</td></tr>`; return; }
+  const time = (s) => (s || "").slice(11, 16);
+  $("trades").innerHTML = `<thead><tr>
+      <th>#</th><th>Entry</th><th>Exit</th><th>Session</th><th>Side</th><th class="r">Qty</th>
+      <th class="r">Entry price</th><th class="r">Exit price</th><th>Result</th><th class="r">P&amp;L</th><th class="r">R</th><th class="r">Cumulative</th>
+    </tr></thead><tbody>` +
+    trades.map((t, i) => `<tr>
+      <td class="num">${i + 1}</td><td class="num">${time(t.entry_time)}</td><td class="num">${time(t.exit_time)}</td>
+      <td>${esc(t.session)}</td><td><span class="dir ${esc(t.direction)}">${esc(t.direction).toUpperCase()}</span></td>
+      <td class="r num">${t.contracts}</td><td class="r num">${Number(t.entry).toFixed(2)}</td><td class="r num">${Number(t.exit).toFixed(2)}</td>
+      <td><span class="chip ${esc(t.result)}">${esc(t.result)}</span></td>
+      <td class="r num ${cls(t.pnl)}">${money(t.pnl)}</td>
+      <td class="r num ${cls(t.r)}">${isFinite(t.r) ? (t.r >= 0 ? "+" : "") + Number(t.r).toFixed(2) : "–"}</td>
+      <td class="r num ${cls(t.cum_pnl)}">${money(t.cum_pnl ?? 0)}</td>
+    </tr>`).join("") + `</tbody>`;
+}
+
+// ---- Logs -----------------------------------------------------------------------
+function repoInfo() {
+  if (!ON_GITHUB) return null;
+  const owner = location.hostname.split(".")[0];
+  const parts = location.pathname.split("/").filter(Boolean);
+  if (parts.length && /\.html?$/i.test(parts[parts.length - 1])) parts.pop();
+  if (parts.length === 1) return { owner, repo: `${owner}.github.io`, trader: parts[0] };
+  if (parts.length >= 2) return { owner, repo: parts[0], trader: parts[parts.length - 1] };
+  return null;
+}
+async function fetchLog(date) {
+  if (sampleMode) return sampleLog(date);
+  if (!repoInfo()) return "";
+  return (await readRepoFile(`${traderPath()}/logs/${date}.txt`)) || "";
+}
+function classify(msg) {
+  if (/^(LONG|SHORT) \d/.test(msg)) return "order";
+  if (/Trade closed: TP/.test(msg)) return "tp";
+  if (/Trade closed: SL/.test(msg)) return "sl";
+  if (/Trade closed: BE|Break-even/.test(msg)) return "be";
+  if (/^(No signal|Outside trading|Skipped)/.test(msg)) return "quiet";
+  return "";
+}
+async function renderLog() {
+  $("logTitle").textContent = `Decision log · ${fmtDay(selected)}`;
+  let text;
+  try { text = await fetchLog(selected); }
+  catch { $("logStatus").textContent = "Couldn't reach GitHub just now. The log will retry in two minutes."; return; }
+  const hideQuiet = $("hideQuiet").checked;
+  const lines = text.split(/\r?\n/).filter((l) => l.trim()).map((l) => {
+    const m = l.match(/^\d{4}-\d{2}-\d{2} (\d{2}:\d{2})(?::\d{2})?\s+(.*)$/);
+    return m ? { t: m[1], msg: m[2] } : { t: "", msg: l };
+  });
+  const shown = lines.filter((l) => !(hideQuiet && classify(l.msg) === "quiet")).reverse();   // newest first
+  if (!lines.length) {
+    $("logStatus").textContent = "No log for this date yet. V2B uploads its log every 5 minutes while it's running live.";
+    $("log").innerHTML = "";
+    return;
+  }
+  const last = lines[lines.length - 1].t;
+  $("logStatus").textContent = `${lines.length} entries · last at ${last}` + (sampleMode ? " · sample" : ``);
+  $("log").innerHTML = shown.map((l) => `<li class="${classify(l.msg)}"><span class="t">${esc(l.t)}</span><span class="m">${esc(l.msg)}</span></li>`).join("");
+}
+function sampleLog(date) {
+  const day = sampleFor().days[date];
+  if (!day) return "";
+  const events = {};
+  day.trades.forEach((t) => {
+    const em = t.entry_time.slice(11, 16), xm = t.exit_time.slice(11, 16);
+    const at = (hm) => { const [h, m] = hm.split(":").map(Number); const r = Math.ceil(m / 5) * 5; return `${String(h + Math.floor(r / 60)).padStart(2, "0")}:${String(r % 60).padStart(2, "0")}`; };
+    (events[at(em)] = events[at(em)] || []).push(`${t.direction.toUpperCase()} ${t.contracts} @ ${t.entry.toFixed(2)} | stop ${t.stop.toFixed(2)} | TP 0% ${t.target.toFixed(2)} | risk $${t.risk.toFixed(2)}`);
+    (events[at(xm)] = events[at(xm)] || []).push(`Trade closed: ${t.result} ${money(t.pnl)} (${t.result === "TP" ? "Profit target" : "Stop loss"} @ ${t.exit.toFixed(2)})`);
+  });
+  const out = []; let seed = 99; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  for (let m = 7 * 60 + 55; m <= 17 * 60; m += 5) {
+    const hm = `${String(Math.floor(m / 60)).padStart(2, "0")}:${String(m % 60).padStart(2, "0")}`;
+    const inSession = (m > 8 * 60 && m <= 11 * 60) || (m > 14 * 60 + 30 && m <= 17 * 60);
+    if (events[hm]) events[hm].forEach((e) => out.push(`${date} ${hm}:00  ${e}`));
+    else if (!inSession) out.push(`${date} ${hm}:00  Outside trading sessions: no new trades.`);
+    else { const a = 400 + Math.floor(rnd() * 3000), b = a + Math.floor(rnd() * 900); out.push(`${date} ${hm}:00  ${rnd() < 0.15 ? "Skipped: signal bar is a pin bar." : `No signal: NQ 12-26 volume ${a} <= previous ${b}`}`); }
+  }
+  return out.join("\n");
+}
+function setView(v) {
+  view = v;
+  $("tabTrades").setAttribute("aria-selected", v === "trades");
+  $("tabLogs").setAttribute("aria-selected", v === "logs");
+  $("tradesView").hidden = v !== "trades";
+  $("logsView").hidden = v !== "logs";
+  try { localStorage.setItem("v2b-view", v); } catch {}
+  if (v === "logs") renderLog();
+  $("footnote").textContent = v === "logs"
+    ? "The log lists V2B's decision on each 5-minute bar while it runs live. Times are the trading PC's time."
+    : footnoteTrades();
+}
+const footnoteTrades = () => sampleMode
+  ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones 5 seconds after each 5-minute bar."
+  : "P&L is gross, before commission.";
+
+async function render() {
+  const day = await loadDay(selected);
+  const trades = (day.trades || []).slice().sort((a, b) => (a.exit_time || "").localeCompare(b.exit_time || ""));
+  if (day.instrument) $("instrument").textContent = `${day.instrument} · 5 minute`;
+  $("updated").textContent = day.updated ? `Updated ${day.updated.slice(11, 16)} on ${fmtDay(day.updated.slice(0, 10))}` : "No updates for this date";
+  $("date").value = selected;
+  renderDays(); renderSummary(trades);
+  if (!days.length && !sampleMode) $("updated").textContent = "No trades uploaded yet"; renderChart(trades); renderSessions(trades); renderTrades(trades);
+  if (view === "trades") $("footnote").textContent = footnoteTrades();
+  if (view === "logs") renderLog();
+}
+
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const latestDay = () => (days.length ? days[days.length - 1].date : new Date().toISOString().slice(0, 10));
+function select(date) {
+  if (!date) return;
+  selected = date;
+  if (location.hash.slice(1) !== date) history.replaceState(null, "", "#" + date);
+  render();
+}
+
+$("date").addEventListener("change", (e) => select(e.target.value));
+$("tabTrades").addEventListener("click", () => setView("trades"));
+$("tabLogs").addEventListener("click", () => setView("logs"));
+$("hideQuiet").addEventListener("change", () => { try { localStorage.setItem("v2b-hide-quiet", $("hideQuiet").checked ? "1" : ""); } catch {} renderLog(); });
+$("prev").addEventListener("click", () => { const p = [...days].reverse().find((d) => d.date < selected); if (p) select(p.date); });
+$("next").addEventListener("click", () => { const n = days.find((d) => d.date > selected); if (n) select(n.date); });
+$("today").addEventListener("click", () => days.length && select(days[days.length - 1].date));
+window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (DATE_RE.test(h) && h !== selected) select(h); });
+
+(async function start() {
+  await loadIndex();
+  const name = sampleMode ? "vimal" : traderFromPath();
+  $("trader").textContent = name || "Trader";
+  if (name) document.title = `${name} · V2B Trade Journal`;
+  try { $("hideQuiet").checked = localStorage.getItem("v2b-hide-quiet") === "1"; } catch {}
+  let savedView = "trades"; try { savedView = localStorage.getItem("v2b-view") || "trades"; } catch {}
+  const h = location.hash.slice(1);
+  selected = DATE_RE.test(h) ? h : latestDay();
+  setView(savedView === "logs" ? "logs" : "trades");
+  select(selected);
+  try { $("autoRefresh").checked = localStorage.getItem("v2b-auto-refresh") !== "off"; } catch {}
+  markChecked();
+  setInterval(tick, 1000);
+})();
+
+// ---- Auto-refresh ---------------------------------------------------------------
+// Trades and log are both checked 5 seconds after each 5-minute bar closes
+// (xx:00:05, xx:05:05, ...), just after V2B uploads. About 24 reads an hour,
+// inside GitHub's 60. Pauses while the browser tab is hidden and catches up as
+// soon as it is shown again.
+const CHECK_OFFSET_SECONDS = 5;
+let nextCheck = 0, busy = false;
+function nextCheckTime(from) {
+  const t = new Date(from);
+  t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, CHECK_OFFSET_SECONDS, 0);
+  if (t.getTime() <= from) t.setMinutes(t.getMinutes() + 5);
+  return t.getTime();
+}
+function markChecked() {
+  nextCheck = nextCheckTime(Date.now());
+  updateRefreshInfo();
+}
+function updateRefreshInfo() {
+  if (busy) { $("refreshInfo").textContent = "Checking…"; return; }
+  $("refreshInfo").textContent = $("autoRefresh").checked
+    ? `Next check at ${new Date(nextCheck).toLocaleTimeString("en-GB")}`
+    : "Off";
+}
+async function refreshNow() {
+  if (busy || sampleMode) return;
+  busy = true; updateRefreshInfo();
+  try {
+    const latest = days.length ? days[days.length - 1].date : null;
+    await loadIndex();
+    if (selected === latest || selected === new Date().toISOString().slice(0, 10)) await render(); else renderDays();
+    if (view !== "logs") await renderLog();   // render() already refreshes the log when it is open
+  } finally {
+    busy = false; markChecked();
+  }
+}
+function tick() {
+  if (document.hidden) return;
+  if ($("autoRefresh").checked && Date.now() >= nextCheck) refreshNow();
+  else updateRefreshInfo();
+}
+$("refreshNow").addEventListener("click", refreshNow);
+$("autoRefresh").addEventListener("change", () => {
+  try { localStorage.setItem("v2b-auto-refresh", $("autoRefresh").checked ? "on" : "off"); } catch {}
+  markChecked();
+});
+document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
+</script>
+</body>
+</html>
