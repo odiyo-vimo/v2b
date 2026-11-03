@@ -209,8 +209,8 @@ td.r, th.r { text-align: right; }
 // and <trader>/logs/YYYY-MM-DD.txt after each bar. Those uploads don't republish
 // the site; the page reads them straight from the repo through GitHub's API
 // (falling back to GitHub's raw file server if the API's hourly limit is reached).
-// GitHub allows 60 API reads an hour per network, so the page checks every
-// 2 minutes and only polls the tab that is open.
+// GitHub allows 60 API reads an hour per network; the page checks about 24
+// times an hour (see Auto-refresh below).
 const ON_GITHUB = /\.github\.io$/i.test(location.hostname);
 const BRANCH = "main";
 
