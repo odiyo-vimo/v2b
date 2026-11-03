@@ -220,6 +220,7 @@ let selected = null;    // "YYYY-MM-DD"
 let sampleMode = false;
 let timer = null;
 let view = "trades";    // "trades" | "logs"
+let lastLogLine = { date: "", t: "" };   // newest log line shown (bar time)
 const dayCache = {};    // date -> { sig, data }
 
 const money = (v) => (v > 0 ? "+$" : v < 0 ? "-$" : "$") + Math.abs(v).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -454,11 +455,13 @@ async function renderLog() {
   });
   const shown = lines.filter((l) => !(hideQuiet && classify(l.msg) === "quiet")).reverse();   // newest first
   if (!lines.length) {
+    lastLogLine = { date: selected, t: "" };
     $("logStatus").textContent = "No log for this date yet. V2B uploads its log every 5 minutes while it's running live.";
     $("log").innerHTML = "";
     return;
   }
   const last = lines[lines.length - 1].t;
+  lastLogLine = { date: selected, t: last };
   $("logStatus").textContent = `${lines.length} entries · last at ${last}` + (sampleMode ? " · sample" : ``);
   $("log").innerHTML = shown.map((l) => `<li class="${classify(l.msg)}"><span class="t">${esc(l.t)}</span><span class="m">${esc(l.msg)}</span></li>`).join("");
 }
@@ -545,49 +548,88 @@ window.addEventListener("hashchange", () => { const h = location.hash.slice(1); 
 })();
 
 // ---- Auto-refresh ---------------------------------------------------------------
-// Trades and log are both checked 5 seconds after each 5-minute bar closes
-// (xx:00:05, xx:05:05, ...), just after V2B uploads. About 24 reads an hour,
-// inside GitHub's 60. Pauses while the browser tab is hidden and catches up as
-// soon as it is shown again.
+// Trades and log are checked 5 seconds after each 5-minute bar closes (xx:00:05,
+// xx:05:05, ...). V2B's upload can land a few seconds later than that, so if the
+// log doesn't have the bar that just closed yet, the log alone is checked again
+// at +20 and +45 seconds. At most about 48 reads an hour, inside GitHub's 60.
+// Pauses while the browser tab is hidden and catches up when it is shown again.
 const CHECK_OFFSET_SECONDS = 5;
-let nextCheck = 0, busy = false;
+const FOLLOW_UP_SECONDS = [20, 45];
+let nextCheck = 0, busy = false, followUps = [], waitingFor = "";
+const hhmm = (d) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+const todayStr = () => new Date().toISOString().slice(0, 10);
 function nextCheckTime(from) {
   const t = new Date(from);
   t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, CHECK_OFFSET_SECONDS, 0);
   if (t.getTime() <= from) t.setMinutes(t.getMinutes() + 5);
   return t.getTime();
 }
+// The bar that should be in the log by now, e.g. "12:50" from 12:50:05 onwards.
+function expectedBar() {
+  const t = new Date();
+  t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, 0, 0);
+  return hhmm(t);
+}
+const logIsBehind = () => selected === todayStr() && lastLogLine.date === selected && lastLogLine.t < expectedBar();
 function markChecked() {
   nextCheck = nextCheckTime(Date.now());
   updateRefreshInfo();
 }
 function updateRefreshInfo() {
   if (busy) { $("refreshInfo").textContent = "Checking…"; return; }
-  $("refreshInfo").textContent = $("autoRefresh").checked
-    ? `Next check at ${new Date(nextCheck).toLocaleTimeString("en-GB")}`
-    : "Off";
+  if (!$("autoRefresh").checked) { $("refreshInfo").textContent = "Off"; return; }
+  if (followUps.length) {
+    $("refreshInfo").textContent = `Waiting for V2B's ${waitingFor} upload · checking again at ${new Date(followUps[0]).toLocaleTimeString("en-GB")}`;
+    return;
+  }
+  $("refreshInfo").textContent = `Next check at ${new Date(nextCheck).toLocaleTimeString("en-GB")}`;
 }
-async function refreshNow() {
+async function refreshNow(scheduled) {
   if (busy || sampleMode) return;
-  busy = true; updateRefreshInfo();
+  busy = true; followUps = []; updateRefreshInfo();
   try {
     const latest = days.length ? days[days.length - 1].date : null;
     await loadIndex();
-    if (selected === latest || selected === new Date().toISOString().slice(0, 10)) await render(); else renderDays();
+    if (selected === latest || selected === todayStr()) await render(); else renderDays();
     if (view !== "logs") await renderLog();   // render() already refreshes the log when it is open
   } finally {
     busy = false; markChecked();
+    if (scheduled === true && logIsBehind()) {
+      const base = new Date(); base.setSeconds(0, 0);
+      base.setMinutes(Math.floor(base.getMinutes() / 5) * 5);
+      waitingFor = expectedBar();
+      followUps = FOLLOW_UP_SECONDS.map((s) => base.getTime() + s * 1000).filter((t) => t > Date.now());
+      updateRefreshInfo();
+    }
+  }
+}
+// Log-only re-check; also reloads trades if the new lines include an order or a closed trade.
+async function followUp() {
+  if (busy) return;
+  busy = true; updateRefreshInfo();
+  try {
+    const before = lastLogLine.t;
+    await renderLog();
+    if (lastLogLine.t > before) {
+      followUps = [];
+      if (/^(LONG|SHORT) \d|Trade closed/m.test($("log").textContent)) { await loadIndex(); await render(); }
+    } else if (!logIsBehind()) followUps = [];
+  } finally {
+    busy = false; updateRefreshInfo();
   }
 }
 function tick() {
   if (document.hidden) return;
-  if ($("autoRefresh").checked && Date.now() >= nextCheck) refreshNow();
-  else updateRefreshInfo();
+  if ($("autoRefresh").checked) {
+    if (Date.now() >= nextCheck) { refreshNow(true); return; }
+    if (followUps.length && Date.now() >= followUps[0]) { followUps.shift(); followUp(); return; }
+  }
+  updateRefreshInfo();
 }
-$("refreshNow").addEventListener("click", refreshNow);
+$("refreshNow").addEventListener("click", () => refreshNow(false));
 $("autoRefresh").addEventListener("change", () => {
   try { localStorage.setItem("v2b-auto-refresh", $("autoRefresh").checked ? "on" : "off"); } catch {}
-  markChecked();
+  followUps = []; markChecked();
 });
 document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
 </script>
