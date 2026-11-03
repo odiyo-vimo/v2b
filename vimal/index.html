@@ -292,19 +292,30 @@ async function readRepoFile(path) {
   if (!info) throw new Error("not on GitHub");
   // A unique "t" on every request makes GitHub's cache return the current file
   // (without it, GitHub can keep answering "unchanged" for a while after an upload).
+  // Near the hourly limit, go straight to the backup server to keep a few API reads in hand.
+  const useApi = fetchInfo.left === null || fetchInfo.left > 5 || Date.now() > fetchInfo.resetAt;
   try {
+    if (!useApi) throw new Error("saving API reads");
     const res = await fetch(`https://api.github.com/repos/${info.owner}/${info.repo}/contents/${path}?ref=${BRANCH}&t=${Date.now()}`,
       { headers: { Accept: "application/vnd.github.raw+json" }, cache: "no-store" });
-    if (res.status === 404) return null;
+    const left = res.headers.get("X-RateLimit-Remaining"), reset = res.headers.get("X-RateLimit-Reset");
+    if (left !== null) fetchInfo.left = Number(left);
+    if (reset !== null) fetchInfo.resetAt = Number(reset) * 1000;
+    if (res.status === 404) { fetchInfo.via = "GitHub"; fetchInfo.at = new Date(); return null; }
     if (!res.ok) throw new Error(String(res.status));   // e.g. 403 when the hourly limit is used up
-    return await res.text();
+    const text = await res.text();
+    fetchInfo.via = "GitHub"; fetchInfo.at = new Date();
+    return text;
   } catch {
     const res = await fetch(`https://raw.githubusercontent.com/${info.owner}/${info.repo}/${BRANCH}/${path}?t=${Date.now()}`, { cache: "no-store" });
+    fetchInfo.via = "backup server"; fetchInfo.at = new Date();
     if (res.status === 404) return null;
     if (!res.ok) throw new Error(String(res.status));
     return res.text();
   }
 }
+// How the last file was fetched, shown under the log so delays can be explained.
+const fetchInfo = { at: null, via: "", left: null, resetAt: 0 };
 const traderPath = () => (repoInfo() || {}).trader || traderFromPath();
 
 async function loadIndex() {
@@ -477,7 +488,9 @@ async function renderLog() {
   }
   const last = lines[lines.length - 1].t;
   lastLogLine = { date: selected, t: last };
-  $("logStatus").textContent = `${lines.length} entries · last at ${last}` + (sampleMode ? " · sample" : ``);
+  const how = sampleMode || !fetchInfo.at ? (sampleMode ? " · sample" : "")
+    : ` · checked ${fetchInfo.at.toLocaleTimeString("en-GB")} via ${fetchInfo.via}` + (fetchInfo.left !== null ? ` (${fetchInfo.left} GitHub reads left this hour)` : "");
+  $("logStatus").textContent = `${lines.length} entries · last at ${last}${how}`;
   $("log").innerHTML = shown.map((l) => `<li class="${classify(l.msg)}"><span class="t">${esc(l.t)}</span><span class="m">${esc(l.msg)}</span></li>`).join("");
 }
 function sampleLog(date) {
@@ -652,9 +665,9 @@ $("download").addEventListener("click", downloadDay);
 // At most about 54 reads an hour, inside GitHub's 60. Pauses while the browser tab
 // is hidden and catches up as soon as it is shown again.
 const LOG_OFFSET_SECONDS = 5;
-const LOG_FOLLOW_UP_SECONDS = 20;
+const LOG_FOLLOW_UPS = [20, 45, 90];   // seconds after the bar, used only while the log is behind
 const TRADES_EVERY_SECONDS = 120;
-let nextLog = 0, nextTrades = 0, logFollowUp = 0, waitingFor = "", busyLog = false, busyTrades = false;
+let nextLog = 0, nextTrades = 0, logFollowUp = 0, followIdx = 0, waitingFor = "", busyLog = false, busyTrades = false;
 const hhmm = (d) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 const todayStr = () => new Date().toISOString().slice(0, 10);
 function barStart(from) {
@@ -704,11 +717,15 @@ async function refreshLog(isFollowUp) {
   finally {
     busyLog = false;
     nextLog = nextLogTime(Date.now());
-    if (!isFollowUp && logIsBehind()) {
+    if (!isFollowUp) followIdx = 0;
+    logFollowUp = 0;
+    if (logIsBehind()) {
+      // Keep re-checking the log at +20s, +45s and +90s until the new bar arrives.
       waitingFor = hhmm(barStart(Date.now()));
-      logFollowUp = barStart(Date.now()).getTime() + LOG_FOLLOW_UP_SECONDS * 1000;
-      if (logFollowUp <= Date.now()) logFollowUp = 0;
-    } else logFollowUp = 0;
+      const base = barStart(Date.now()).getTime();
+      while (followIdx < LOG_FOLLOW_UPS.length && base + LOG_FOLLOW_UPS[followIdx] * 1000 <= Date.now()) followIdx++;
+      if (followIdx < LOG_FOLLOW_UPS.length) logFollowUp = base + LOG_FOLLOW_UPS[followIdx++] * 1000;
+    }
     updateRefreshInfo();
   }
 }
