@@ -148,3 +148,4 @@
 2026-11-03 20:15:00  Trade closed: SL -$294.00 (Stop loss @ 28297.5)
 2026-11-03 20:20:00  LONG 6 @ 28278.75 | stop 28256.25 | TP 1R 28301.25 | risk $270.00
 2026-11-03 20:25:00  No signal: NQ 12-26 volume 3766 <= previous 4935
+2026-11-03 20:30:00  No signal: NQ 12-26 volume 3149 <= previous 3766
