@@ -159,3 +159,5 @@
 2026-11-03 20:50:00  LONG 10 @ 28326.75 | stop 28313 | TP 1R 28340.5 | risk $275.00 (replaced previous)
 2026-11-03 20:50:00  Trade closed: SL -$253.00 (Stop loss @ 28313)
 2026-11-03 20:55:00  SHORT 7 @ 28325 | stop 28345.5 | TP 1R 28304.5 | risk $287.00
+2026-11-03 20:55:00  Trade closed: TP +$287.00 (Profit target @ 28304.5)
+2026-11-03 21:00:00  SHORT 13 @ 28319.25 | stop 28330.75 | TP 1R 28307.75 | risk $299.00
