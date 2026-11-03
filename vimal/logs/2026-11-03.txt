@@ -125,3 +125,5 @@
 2026-11-03 19:10:00  SHORT 13 @ 28369.5 | stop 28381 | TP 1R 28358 | risk $299.00 (replaced previous)
 2026-11-03 19:15:00  Skipped: signal bar is a pin bar.
 2026-11-03 19:20:00  No signal: NQ 12-26 volume 3354 <= previous 5852
+2026-11-03 19:20:00  Trade closed: TP +$299.00 (Profit target @ 28358)
+2026-11-03 19:25:00  SHORT 10 @ 28361 | stop 28376 | TP 1R 28346 | risk $300.00
