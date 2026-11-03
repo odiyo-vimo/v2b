@@ -501,7 +501,7 @@ const footnoteTrades = () => sampleMode
   ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones 5 seconds after each 5-minute bar."
   : "P&L is gross, before commission.";
 
-async function render() {
+async function render(withLog = true) {
   const day = await loadDay(selected);
   const trades = (day.trades || []).slice().sort((a, b) => (a.exit_time || "").localeCompare(b.exit_time || ""));
   if (day.instrument) $("instrument").textContent = `${day.instrument} · 5 minute`;
@@ -510,7 +510,7 @@ async function render() {
   renderDays(); renderSummary(trades);
   if (!days.length && !sampleMode) $("updated").textContent = "No trades uploaded yet"; renderChart(trades); renderSessions(trades); renderTrades(trades);
   if (view === "trades") $("footnote").textContent = footnoteTrades();
-  if (view === "logs") renderLog();
+  if (withLog && view === "logs") renderLog();
 }
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -548,88 +548,88 @@ window.addEventListener("hashchange", () => { const h = location.hash.slice(1); 
 })();
 
 // ---- Auto-refresh ---------------------------------------------------------------
-// Trades and log are checked 5 seconds after each 5-minute bar closes (xx:00:05,
-// xx:05:05, ...). V2B's upload can land a few seconds later than that, so if the
-// log doesn't have the bar that just closed yet, the log alone is checked again
-// at +20 and +45 seconds. At most about 48 reads an hour, inside GitHub's 60.
-// Pauses while the browser tab is hidden and catches up when it is shown again.
-const CHECK_OFFSET_SECONDS = 5;
-const FOLLOW_UP_SECONDS = [20, 45];
-let nextCheck = 0, busy = false, followUps = [], waitingFor = "";
+// Two separate schedules, both running whichever tab is open:
+//  - Log: 5 seconds after each 5-minute bar closes (xx:00:05, xx:05:05, ...). If
+//    V2B's upload hasn't landed yet, the log is checked once more at +20 seconds.
+//  - Trades: every 2 minutes (the day's trade list is only downloaded again when
+//    its trade count or P&L has changed).
+// At most about 54 reads an hour, inside GitHub's 60. Pauses while the browser tab
+// is hidden and catches up as soon as it is shown again.
+const LOG_OFFSET_SECONDS = 5;
+const LOG_FOLLOW_UP_SECONDS = 20;
+const TRADES_EVERY_SECONDS = 120;
+let nextLog = 0, nextTrades = 0, logFollowUp = 0, waitingFor = "", busyLog = false, busyTrades = false;
 const hhmm = (d) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
 const todayStr = () => new Date().toISOString().slice(0, 10);
-function nextCheckTime(from) {
+function barStart(from) {
   const t = new Date(from);
-  t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, CHECK_OFFSET_SECONDS, 0);
+  t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, 0, 0);
+  return t;
+}
+function nextLogTime(from) {
+  const t = barStart(from);
+  t.setSeconds(LOG_OFFSET_SECONDS);
   if (t.getTime() <= from) t.setMinutes(t.getMinutes() + 5);
   return t.getTime();
 }
-// The bar that should be in the log by now, e.g. "12:50" from 12:50:05 onwards.
-function expectedBar() {
-  const t = new Date();
-  t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, 0, 0);
-  return hhmm(t);
-}
-const logIsBehind = () => selected === todayStr() && lastLogLine.date === selected && lastLogLine.t < expectedBar();
+// True when today's log doesn't yet have the bar that just closed (e.g. 12:50 at 12:50:05).
+const logIsBehind = () => selected === todayStr() && lastLogLine.date === selected && lastLogLine.t < hhmm(barStart(Date.now()));
+
 function markChecked() {
-  nextCheck = nextCheckTime(Date.now());
+  nextLog = nextLogTime(Date.now());
+  nextTrades = Date.now() + TRADES_EVERY_SECONDS * 1000;
+  logFollowUp = 0;
   updateRefreshInfo();
 }
 function updateRefreshInfo() {
-  if (busy) { $("refreshInfo").textContent = "Checking…"; return; }
   if (!$("autoRefresh").checked) { $("refreshInfo").textContent = "Off"; return; }
-  if (followUps.length) {
-    $("refreshInfo").textContent = `Waiting for V2B's ${waitingFor} upload · checking again at ${new Date(followUps[0]).toLocaleTimeString("en-GB")}`;
-    return;
-  }
-  $("refreshInfo").textContent = `Next check at ${new Date(nextCheck).toLocaleTimeString("en-GB")}`;
+  const left = Math.max(0, Math.round((nextTrades - Date.now()) / 1000));
+  const trades = busyTrades ? "checking…" : `in ${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+  const log = busyLog ? "checking…"
+    : logFollowUp ? `waiting for ${waitingFor}, again at ${new Date(logFollowUp).toLocaleTimeString("en-GB")}`
+    : `at ${new Date(nextLog).toLocaleTimeString("en-GB")}`;
+  $("refreshInfo").textContent = `Trades ${trades} · Log ${log}`;
 }
-async function refreshNow(scheduled) {
-  if (busy || sampleMode) return;
-  busy = true; followUps = []; updateRefreshInfo();
+async function refreshTrades() {
+  if (busyTrades || sampleMode) return;
+  busyTrades = true; updateRefreshInfo();
   try {
     const latest = days.length ? days[days.length - 1].date : null;
     await loadIndex();
-    if (selected === latest || selected === todayStr()) await render(); else renderDays();
-    if (view !== "logs") await renderLog();   // render() already refreshes the log when it is open
+    if (selected === latest || selected === todayStr()) await render(false); else renderDays();
   } finally {
-    busy = false; markChecked();
-    if (scheduled === true && logIsBehind()) {
-      const base = new Date(); base.setSeconds(0, 0);
-      base.setMinutes(Math.floor(base.getMinutes() / 5) * 5);
-      waitingFor = expectedBar();
-      followUps = FOLLOW_UP_SECONDS.map((s) => base.getTime() + s * 1000).filter((t) => t > Date.now());
-      updateRefreshInfo();
-    }
+    busyTrades = false; nextTrades = Date.now() + TRADES_EVERY_SECONDS * 1000; updateRefreshInfo();
   }
 }
-// Log-only re-check; also reloads trades if the new lines include an order or a closed trade.
-async function followUp() {
-  if (busy) return;
-  busy = true; updateRefreshInfo();
-  try {
-    const before = lastLogLine.t;
-    await renderLog();
-    if (lastLogLine.t > before) {
-      followUps = [];
-      if (/^(LONG|SHORT) \d|Trade closed/m.test($("log").textContent)) { await loadIndex(); await render(); }
-    } else if (!logIsBehind()) followUps = [];
-  } finally {
-    busy = false; updateRefreshInfo();
+async function refreshLog(isFollowUp) {
+  if (busyLog || sampleMode) return;
+  busyLog = true; updateRefreshInfo();
+  try { await renderLog(); }
+  finally {
+    busyLog = false;
+    nextLog = nextLogTime(Date.now());
+    if (!isFollowUp && logIsBehind()) {
+      waitingFor = hhmm(barStart(Date.now()));
+      logFollowUp = barStart(Date.now()).getTime() + LOG_FOLLOW_UP_SECONDS * 1000;
+      if (logFollowUp <= Date.now()) logFollowUp = 0;
+    } else logFollowUp = 0;
+    updateRefreshInfo();
   }
 }
 function tick() {
   if (document.hidden) return;
   if ($("autoRefresh").checked) {
-    if (Date.now() >= nextCheck) { refreshNow(true); return; }
-    if (followUps.length && Date.now() >= followUps[0]) { followUps.shift(); followUp(); return; }
+    const now = Date.now();
+    if (now >= nextTrades) refreshTrades();
+    if (now >= nextLog) refreshLog(false);
+    else if (logFollowUp && now >= logFollowUp) { logFollowUp = 0; refreshLog(true); }
   }
   updateRefreshInfo();
 }
-$("refreshNow").addEventListener("click", () => refreshNow(false));
+$("refreshNow").addEventListener("click", () => { refreshTrades(); refreshLog(true); });
 $("autoRefresh").addEventListener("change", () => {
   try { localStorage.setItem("v2b-auto-refresh", $("autoRefresh").checked ? "on" : "off"); } catch {}
-  followUps = []; markChecked();
+  markChecked();
 });
 document.addEventListener("visibilitychange", () => { if (!document.hidden) tick(); });
 </script>
