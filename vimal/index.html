@@ -117,6 +117,8 @@ td { padding: 9px 10px; border-bottom: 1px solid var(--line); white-space: nowra
 tr:last-child td { border-bottom: none; }
 td.r, th.r { text-align: right; }
 td.cum { color: var(--muted); }
+.download { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+#download { font-weight: 600; border-color: var(--accent); color: var(--accent); }
 .scroll { overflow-x: auto; }
 .empty { color: var(--muted); padding: 28px 8px; text-align: center; }
 .note { color: var(--muted); font-size: 0.82rem; }
@@ -192,6 +194,10 @@ td.cum { color: var(--muted); }
     <h2 id="tradesTitle">Trades</h2>
     <div class="scroll"><table id="trades"></table></div>
   </section>
+  <div class="download">
+    <button type="button" id="download">Download</button>
+    <span class="note" id="downloadNote">Excel file with this day's summary and all its trades.</span>
+  </div>
   </div>
 
   <section class="panel" id="logsView" hidden>
@@ -510,9 +516,11 @@ const footnoteTrades = () => sampleMode
   ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones 5 seconds after each 5-minute bar."
   : "P&L is gross, before commission.";
 
+let currentDay = { date: "", instrument: "", trades: [] };   // what the Trades tab is showing, for Download
 async function render(withLog = true) {
   const day = await loadDay(selected);
   const trades = (day.trades || []).slice().sort((a, b) => (a.exit_time || "").localeCompare(b.exit_time || ""));
+  currentDay = { date: selected, instrument: day.instrument || "", trades };
   if (day.instrument) $("instrument").textContent = `${day.instrument} · 5 minute`;
   $("updated").textContent = day.updated ? `Updated ${day.updated.slice(11, 16)} on ${fmtDay(day.updated.slice(0, 10))}` : "No updates for this date";
   $("date").value = selected;
@@ -555,6 +563,85 @@ window.addEventListener("hashchange", () => { const h = location.hash.slice(1); 
   markChecked();
   setInterval(tick, 1000);
 })();
+
+// ---- Download (Excel) -------------------------------------------------------------
+// Builds an .xlsx in the browser with two sheets: Summary (day figures and the
+// session breakdown) and Trades (the table as shown). SheetJS is loaded on first use.
+const SHEETJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+function loadSheetJs() {
+  if (window.XLSX) return Promise.resolve(window.XLSX);
+  return new Promise((resolve, reject) => {
+    const el = document.createElement("script");
+    el.src = SHEETJS_URL;
+    el.onload = () => resolve(window.XLSX);
+    el.onerror = () => reject(new Error("load"));
+    document.head.appendChild(el);
+  });
+}
+async function downloadDay() {
+  const note = $("downloadNote");
+  const { date, instrument, trades } = currentDay;
+  if (!trades.length) { note.textContent = "There are no trades on this date to download."; return; }
+  let XLSX;
+  try { XLSX = await loadSheetJs(); }
+  catch { note.textContent = "Couldn't load the Excel tool. Check your connection and try again."; return; }
+
+  const name = $("trader").textContent || "trader";
+  const count = (r) => trades.filter((t) => t.result === r).length;
+  const tp = count("TP"), be = count("BE"), sl = count("SL");
+  const pnl = trades.reduce((a, t) => a + (Number(t.pnl) || 0), 0);
+  const rs = trades.filter((t) => t.r !== null && isFinite(t.r)).map((t) => Number(t.r));
+  const avgR = rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : null;
+
+  // Summary sheet
+  const summary = [
+    ["V2B Trade Journal"],
+    ["Trader", name],
+    ["Date", date],
+    ["Instrument", instrument || ""],
+    [],
+    ["Trades", trades.length],
+    ["TP", tp],
+    ["BE", be],
+    ["SL", sl],
+    ["Win rate", trades.length ? tp / trades.length : null],
+    ["Win rate excl. BE", tp + sl ? tp / (tp + sl) : null],
+    ["Average R", avgR],
+    ["Day P&L ($)", pnl],
+    [],
+    ["By session", "Trades", "TP", "P&L ($)"],
+  ];
+  const by = {};
+  trades.forEach((t) => { const k = t.session || "Other"; (by[k] = by[k] || { n: 0, tp: 0, pnl: 0 }); by[k].n++; by[k].pnl += Number(t.pnl) || 0; if (t.result === "TP") by[k].tp++; });
+  Object.keys(by).forEach((k) => summary.push([k, by[k].n, by[k].tp, by[k].pnl]));
+  const ws1 = XLSX.utils.aoa_to_sheet(summary);
+  const fmt = (ws, ref, z) => { if (ws[ref]) ws[ref].z = z; };
+  fmt(ws1, "B10", "0%"); fmt(ws1, "B11", "0%"); fmt(ws1, "B12", "+0.00;-0.00"); fmt(ws1, "B13", "$#,##0.00;-$#,##0.00");
+  for (let r = 16; r < 16 + Object.keys(by).length; r++) fmt(ws1, "D" + r, "$#,##0.00;-$#,##0.00");
+  ws1["!cols"] = [{ wch: 20 }, { wch: 14 }, { wch: 8 }, { wch: 12 }];
+
+  // Trades sheet (same columns and order as the table: newest first)
+  const time = (s) => (s || "").slice(11, 16);
+  const header = ["#", "Entry", "Exit", "Session", "Side", "Qty", "Entry price", "Exit price", "Points", "Result", "R", "P&L ($)", "Cumulative P&L ($)"];
+  const rows = trades.map((t, i) => [i + 1, time(t.entry_time), time(t.exit_time), t.session || "", t.direction || "", Number(t.contracts),
+    Number(t.entry), Number(t.exit), t.pnl_points === null ? null : Number(t.pnl_points), t.result || "",
+    t.r === null ? null : Number(t.r), Number(t.pnl), Number(t.cum_pnl ?? 0)]).reverse();
+  const ws2 = XLSX.utils.aoa_to_sheet([header, ...rows]);
+  for (let r = 2; r <= rows.length + 1; r++) {
+    ["G", "H"].forEach((c) => fmt(ws2, c + r, "0.00"));
+    fmt(ws2, "I" + r, "+0.00;-0.00"); fmt(ws2, "K" + r, "+0.00;-0.00");
+    fmt(ws2, "L" + r, "$#,##0.00;-$#,##0.00"); fmt(ws2, "M" + r, "$#,##0.00;-$#,##0.00");
+  }
+  ws2["!cols"] = [4, 7, 7, 16, 7, 5, 11, 11, 8, 7, 7, 11, 17].map((w) => ({ wch: w }));
+  ws2["!autofilter"] = { ref: `A1:M${rows.length + 1}` };
+
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws1, "Summary");
+  XLSX.utils.book_append_sheet(wb, ws2, "Trades");
+  XLSX.writeFile(wb, `V2B_${name}_${date}.xlsx`);
+  note.textContent = ON_GITHUB ? `Downloaded V2B_${name}_${date}.xlsx` : "Downloads work on the GitHub page; this preview can't save files.";
+}
+$("download").addEventListener("click", downloadDay);
 
 // ---- Auto-refresh ---------------------------------------------------------------
 // Two separate schedules, both running whichever tab is open:
