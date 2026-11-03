@@ -141,7 +141,7 @@ td.r, th.r { text-align: right; }
 <div class="wrap">
   <header>
     <div class="titleblock">
-      <a class="back" href="../">← All traders</a>
+      <a class="back" href="../">← All</a>
       <div class="eyebrow">V2B Trade Journal</div>
       <h1 id="trader">Trader</h1>
       <div class="sub">
@@ -211,7 +211,6 @@ td.r, th.r { text-align: right; }
 // (falling back to GitHub's raw file server if the API's hourly limit is reached).
 // GitHub allows 60 API reads an hour per network, so the page checks every
 // 2 minutes and only polls the tab that is open.
-const REFRESH_SECONDS = 120;   // trades
 const ON_GITHUB = /\.github\.io$/i.test(location.hostname);
 const BRANCH = "main";
 
@@ -500,7 +499,7 @@ function setView(v) {
     : footnoteTrades();
 }
 const footnoteTrades = () => sampleMode
-  ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones every 2 minutes."
+  ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones 5 seconds after each 5-minute bar."
   : "P&L is gross, before commission.";
 
 async function render() {
@@ -550,56 +549,46 @@ window.addEventListener("hashchange", () => { const h = location.hash.slice(1); 
 })();
 
 // ---- Auto-refresh ---------------------------------------------------------------
-// Trades: checked every 2 minutes. Log: checked 10 seconds after each 5-minute bar
-// closes (xx:00:10, xx:05:10, ...), just after V2B uploads it. Both keep running
-// whichever tab is open (about 42 reads an hour, inside GitHub's 60), pause while
-// the browser tab is hidden, and catch up as soon as it is shown again.
-const LOG_OFFSET_SECONDS = 10;
-let nextTrades = 0, nextLog = 0, busyTrades = false, busyLog = false;
-function nextLogTime(from) {
+// Trades and log are both checked 5 seconds after each 5-minute bar closes
+// (xx:00:05, xx:05:05, ...), just after V2B uploads. About 24 reads an hour,
+// inside GitHub's 60. Pauses while the browser tab is hidden and catches up as
+// soon as it is shown again.
+const CHECK_OFFSET_SECONDS = 5;
+let nextCheck = 0, busy = false;
+function nextCheckTime(from) {
   const t = new Date(from);
-  t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, LOG_OFFSET_SECONDS, 0);
+  t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, CHECK_OFFSET_SECONDS, 0);
   if (t.getTime() <= from) t.setMinutes(t.getMinutes() + 5);
   return t.getTime();
 }
 function markChecked() {
-  nextTrades = Date.now() + REFRESH_SECONDS * 1000;
-  nextLog = nextLogTime(Date.now());
+  nextCheck = nextCheckTime(Date.now());
   updateRefreshInfo();
 }
 function updateRefreshInfo() {
-  if (!$("autoRefresh").checked) { $("refreshInfo").textContent = "Off"; return; }
-  const left = Math.max(0, Math.round((nextTrades - Date.now()) / 1000));
-  const tradesTxt = busyTrades ? "checking…" : `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
-  const logTxt = busyLog ? "checking…" : new Date(nextLog).toLocaleTimeString("en-GB");
-  $("refreshInfo").textContent = `Trades in ${tradesTxt} · Log at ${logTxt}`;
+  if (busy) { $("refreshInfo").textContent = "Checking…"; return; }
+  $("refreshInfo").textContent = $("autoRefresh").checked
+    ? `Next check at ${new Date(nextCheck).toLocaleTimeString("en-GB")}`
+    : "Off";
 }
-async function refreshTrades() {
-  if (busyTrades || sampleMode) return;
-  busyTrades = true; updateRefreshInfo();
+async function refreshNow() {
+  if (busy || sampleMode) return;
+  busy = true; updateRefreshInfo();
   try {
     const latest = days.length ? days[days.length - 1].date : null;
     await loadIndex();
     if (selected === latest || selected === new Date().toISOString().slice(0, 10)) await render(); else renderDays();
+    if (view !== "logs") await renderLog();   // render() already refreshes the log when it is open
   } finally {
-    busyTrades = false; nextTrades = Date.now() + REFRESH_SECONDS * 1000; updateRefreshInfo();
+    busy = false; markChecked();
   }
-}
-async function refreshLog() {
-  if (busyLog || sampleMode) return;
-  busyLog = true; updateRefreshInfo();
-  try { await renderLog(); }
-  finally { busyLog = false; nextLog = nextLogTime(Date.now()); updateRefreshInfo(); }
 }
 function tick() {
   if (document.hidden) return;
-  if ($("autoRefresh").checked) {
-    if (Date.now() >= nextTrades) refreshTrades();
-    if (Date.now() >= nextLog) refreshLog();
-  }
-  updateRefreshInfo();
+  if ($("autoRefresh").checked && Date.now() >= nextCheck) refreshNow();
+  else updateRefreshInfo();
 }
-$("refreshNow").addEventListener("click", () => { refreshTrades(); refreshLog(); });
+$("refreshNow").addEventListener("click", refreshNow);
 $("autoRefresh").addEventListener("change", () => {
   try { localStorage.setItem("v2b-auto-refresh", $("autoRefresh").checked ? "on" : "off"); } catch {}
   markChecked();
