@@ -168,3 +168,5 @@
 2026-11-03 21:20:00  LONG 3 @ 28316 | stop 28271.25 | TP 1R 28360.75 | risk $268.50
 2026-11-03 21:25:00  No signal: NQ 12-26 volume 1979 <= previous 6510
 2026-11-03 21:30:00  No signal: NQ 12-26 volume 1510 <= previous 1979
+2026-11-03 21:35:00  Newer signal replaces pending entry at 28316.
+2026-11-03 21:35:00  LONG 14 @ 28405.25 | stop 28394.75 | TP 1R 28415.75 | risk $294.00 (replaced previous)
