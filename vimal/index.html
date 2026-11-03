@@ -220,7 +220,6 @@ let selected = null;    // "YYYY-MM-DD"
 let sampleMode = false;
 let timer = null;
 let view = "trades";    // "trades" | "logs"
-const repoCache = {};   // repo path -> { etag, text }
 const dayCache = {};    // date -> { sig, data }
 
 const money = (v) => (v > 0 ? "+$" : v < 0 ? "-$" : "$") + Math.abs(v).toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -280,17 +279,14 @@ function sampleData(seedStart) {
 async function readRepoFile(path) {
   const info = repoInfo();
   if (!info) throw new Error("not on GitHub");
-  const cached = repoCache[path];
+  // A unique "t" on every request makes GitHub's cache return the current file
+  // (without it, GitHub can keep answering "unchanged" for a while after an upload).
   try {
-    const headers = { Accept: "application/vnd.github.raw+json" };
-    if (cached && cached.etag) headers["If-None-Match"] = cached.etag;
-    const res = await fetch(`https://api.github.com/repos/${info.owner}/${info.repo}/contents/${path}?ref=${BRANCH}`, { headers, cache: "no-store" });
-    if (res.status === 304 && cached) return cached.text;
+    const res = await fetch(`https://api.github.com/repos/${info.owner}/${info.repo}/contents/${path}?ref=${BRANCH}&t=${Date.now()}`,
+      { headers: { Accept: "application/vnd.github.raw+json" }, cache: "no-store" });
     if (res.status === 404) return null;
     if (!res.ok) throw new Error(String(res.status));   // e.g. 403 when the hourly limit is used up
-    const text = await res.text();
-    repoCache[path] = { etag: res.headers.get("ETag"), text };
-    return text;
+    return await res.text();
   } catch {
     const res = await fetch(`https://raw.githubusercontent.com/${info.owner}/${info.repo}/${BRANCH}/${path}?t=${Date.now()}`, { cache: "no-store" });
     if (res.status === 404) return null;
