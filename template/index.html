@@ -65,6 +65,16 @@ header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-conten
 .back:hover { text-decoration: underline; }
 .back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .refresh { margin-top: 2px; }
+.refreshblock { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.clock { display: flex; align-items: baseline; gap: 10px; }
+#clock { font-family: var(--font-data); font-size: 1.5rem; font-weight: 500; letter-spacing: 0.02em; }
+@media (max-width: 640px) { .refreshblock { align-items: flex-start; } }
+tr.live td { background: color-mix(in srgb, var(--accent) 9%, transparent); }
+.chip.LIVE { background: var(--accent); color: var(--surface); }
+.chip.PENDING { background: var(--line); color: var(--ink); }
+.livedot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; margin-right: 5px; vertical-align: 1px; }
+@media (prefers-reduced-motion: no-preference) { .chip.LIVE .livedot { animation: pulse 1.4s ease-in-out infinite; } }
+@keyframes pulse { 50% { opacity: 0.25; } }
 .refresh .num { font-size: 0.8rem; }
 button.small { font-size: 0.8rem; padding: 3px 10px; }
 
@@ -154,10 +164,13 @@ td.cum { color: var(--muted); }
         <span id="mode" class="badge">…</span>
       </div>
     </div>
-    <div class="sub refresh">
-      <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
-      <span id="refreshInfo" class="num"></span>
-      <button type="button" id="refreshNow" class="small">Refresh now</button>
+    <div class="refreshblock">
+      <div class="sub refresh">
+        <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
+        <span id="refreshInfo" class="num"></span>
+        <button type="button" id="refreshNow" class="small">Refresh now</button>
+      </div>
+      <div class="clock num" aria-live="off"><span id="clock">--:--:--</span><span class="note" id="barLeft"></span></div>
     </div>
   </header>
 
@@ -371,7 +384,8 @@ function renderSummary(trades) {
   const count = (r) => trades.filter((t) => t.result === r).length;
   const tp = count("TP"), be = count("BE"), sl = count("SL");
   const pnl = trades.reduce((s, t) => s + t.pnl, 0);
-  const rs = trades.filter((t) => isFinite(t.r)).map((t) => t.r);
+  // Average R of the winning trades only (TP).
+  const rs = trades.filter((t) => t.result === "TP" && t.r !== null && isFinite(t.r)).map((t) => Number(t.r));
   const avgR = rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : 0;
   const win = n ? (tp / n) * 100 : 0; const winX = tp + sl ? (tp / (tp + sl)) * 100 : 0;
   $("summary").innerHTML = `
@@ -379,7 +393,7 @@ function renderSummary(trades) {
     <div class="stat"><span class="k">Trades</span><span class="v">${n}</span>
       <span class="chips"><span class="chip TP">TP ${tp}</span><span class="chip BE">BE ${be}</span><span class="chip SL">SL ${sl}</span></span></div>
     <div class="stat"><span class="k">Win rate</span><span class="v">${n ? win.toFixed(0) + "%" : "–"}</span><span class="note">${tp + sl ? winX.toFixed(0) + "% excl. BE" : "&nbsp;"}</span></div>
-    <div class="stat"><span class="k">Average R</span><span class="v ${cls(avgR)}">${n ? (avgR >= 0 ? "+" : "") + avgR.toFixed(2) + "R" : "–"}</span></div>`;
+    <div class="stat"><span class="k">Avg winner R</span><span class="v ${cls(avgR)}">${rs.length ? "+" + avgR.toFixed(2) + "R" : "–"}</span><span class="note">${rs.length ? rs.length + " winning trade" + (rs.length === 1 ? "" : "s") : "&nbsp;"}</span></div>`;
 }
 
 function renderChart(trades) {
@@ -422,9 +436,19 @@ function renderSessions(trades) {
     keys.map((k) => `<tr><td>${esc(k)}</td><td class="r num">${by[k].n}</td><td class="r num">${by[k].tp}</td><td class="r num ${cls(by[k].pnl)}">${money(by[k].pnl)}</td></tr>`).join("") + `</tbody>`;
 }
 
+function liveRow() {
+  const l = liveTrade;
+  if (!l || selected !== todayStr()) return "";
+  const chip = l.state === "live" ? `<span class="chip LIVE"><span class="livedot"></span>LIVE</span>` : `<span class="chip PENDING">PENDING</span>`;
+  const label = l.state === "live" ? "In progress" : "Order working";
+  return `<tr class="live"><td class="num">–</td><td class="num">${esc(l.since || "")}</td><td class="num note">${label}</td><td></td>
+    <td><span class="dir ${l.side === "LONG" ? "Long" : "Short"}">${esc(l.side)}</span></td><td class="r num">${l.qty || ""}</td>
+    <td class="r num">${l.price ? Number(l.price).toFixed(2) : ""}</td><td class="r num note">${l.stop ? "SL " + Number(l.stop).toFixed(2) : ""}</td>
+    <td class="r num note">${l.target ? "TP " + Number(l.target).toFixed(2) : ""}</td><td>${chip}</td><td></td><td></td><td></td></tr>`;
+}
 function renderTrades(trades) {
   $("tradesTitle").textContent = `Trades · ${fmtDay(selected)}`;
-  if (!trades.length) { $("trades").innerHTML = `<tr><td class="empty">No trades logged on this date.</td></tr>`; return; }
+  if (!trades.length && !liveRow()) { $("trades").innerHTML = `<tr><td class="empty">No trades logged on this date.</td></tr>`; return; }
   const time = (s) => (s || "").slice(11, 16);
   const signed = (v, dp) => (v > 0 ? "+" : "") + Number(v).toFixed(dp);
   // Latest trade first; # stays the trade's number in the day (1 = first trade).
@@ -433,7 +457,7 @@ function renderTrades(trades) {
       <th>#</th><th>Entry</th><th>Exit</th><th>Session</th><th>Side</th><th class="r">Qty</th>
       <th class="r">Entry price</th><th class="r">Exit price</th><th class="r">Points</th><th>Result</th>
       <th class="r">R</th><th class="r">P&amp;L</th><th class="r">Cumulative P&amp;L</th>
-    </tr></thead><tbody>` +
+    </tr></thead><tbody>` + liveRow() +
     rows.map(({ t, n }) => `<tr>
       <td class="num">${n}</td><td class="num">${time(t.entry_time)}</td><td class="num">${time(t.exit_time)}</td>
       <td>${esc(t.session)}</td><td><span class="dir ${esc(t.direction)}">${esc(t.direction).toUpperCase()}</span></td>
@@ -469,6 +493,28 @@ function classify(msg) {
   if (/^(No signal|Outside trading|Skipped)/.test(msg)) return "quiet";
   return "";
 }
+// Reads today's log from the top and works out whether an order is working or a
+// trade is open right now: an order line starts one, "Entry filled", "In trade" or
+// a break-even move means it's live, "Trade closed" or a cancel ends it.
+let liveTrade = null;   // { state: "live" | "pending", side, qty, price, stop, target, since }
+function findLiveTrade(lines) {
+  let cur = null;
+  for (const { t, msg } of lines) {
+    let m;
+    if ((m = msg.match(/^(LONG|SHORT) (\d+) @ ([\d.]+) \| stop ([\d.]+) \| TP \S+ ([\d.]+)/)))
+      cur = { state: "pending", side: m[1], qty: +m[2], price: +m[3], stop: +m[4], target: +m[5], since: t };
+    else if ((m = msg.match(/^Entry filled: (LONG|SHORT) (\d+) @ ([\d.]+)(?: \| stop ([\d.]+) \| target ([\d.]+))?/)))
+      cur = { ...(cur || {}), state: "live", side: m[1], qty: +m[2], price: +m[3], stop: m[4] ? +m[4] : cur && cur.stop, target: m[5] ? +m[5] : cur && cur.target, since: t };
+    else if ((m = msg.match(/^In trade: (LONG|SHORT) (\d+) @ ([\d.]+)(?: \| stop ([\d.]+) \| target ([\d.]+))?/)))
+      cur = { ...(cur || {}), state: "live", side: m[1], qty: +m[2], price: +m[3], stop: m[4] ? +m[4] : cur && cur.stop, target: m[5] ? +m[5] : cur && cur.target, since: (cur && cur.state === "live" && cur.since) || t };
+    else if ((m = msg.match(/^Break-even: .* stop moved to ([\d.]+)/)) && cur)
+      cur = { ...cur, state: "live", stop: +m[1] };
+    else if (/^Trade closed:/.test(msg) || /cancelling/i.test(msg) || /^Queued signal dropped/.test(msg))
+      cur = null;
+  }
+  return cur;
+}
+
 async function renderLog() {
   $("logTitle").textContent = `Decision log · ${fmtDay(selected)}`;
   let text;
@@ -482,12 +528,16 @@ async function renderLog() {
   const shown = lines.filter((l) => !(hideQuiet && classify(l.msg) === "quiet")).reverse();   // newest first
   if (!lines.length) {
     lastLogLine = { date: selected, t: "" };
+    if (liveTrade) { liveTrade = null; if (currentDay.date === selected) renderTrades(currentDay.trades); }
     $("logStatus").textContent = "No log for this date yet. V2B uploads its log every 5 minutes while it's running live.";
     $("log").innerHTML = "";
     return;
   }
   const last = lines[lines.length - 1].t;
   lastLogLine = { date: selected, t: last };
+  const before = JSON.stringify(liveTrade);
+  liveTrade = selected === todayStr() ? findLiveTrade(lines) : null;
+  if (JSON.stringify(liveTrade) !== before && currentDay.date === selected) renderTrades(currentDay.trades);
   const how = sampleMode || !fetchInfo.at ? (sampleMode ? " · sample" : "")
     : ` · checked ${fetchInfo.at.toLocaleTimeString("en-GB")} via ${fetchInfo.via}` + (fetchInfo.left !== null ? ` (${fetchInfo.left} GitHub reads left this hour)` : "");
   $("logStatus").textContent = `${lines.length} entries · last at ${last}${how}`;
@@ -603,8 +653,8 @@ async function downloadDay() {
   const count = (r) => trades.filter((t) => t.result === r).length;
   const tp = count("TP"), be = count("BE"), sl = count("SL");
   const pnl = trades.reduce((a, t) => a + (Number(t.pnl) || 0), 0);
-  const rs = trades.filter((t) => t.r !== null && isFinite(t.r)).map((t) => Number(t.r));
-  const avgR = rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : null;
+  const rs = trades.filter((t) => t.result === "TP" && t.r !== null && isFinite(t.r)).map((t) => Number(t.r));
+  const avgR = rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : null;   // winners only
 
   // Summary sheet
   const summary = [
@@ -619,7 +669,7 @@ async function downloadDay() {
     ["SL", sl],
     ["Win rate", trades.length ? tp / trades.length : null],
     ["Win rate excl. BE", tp + sl ? tp / (tp + sl) : null],
-    ["Average R", avgR],
+    ["Avg winner R", avgR],
     ["Day P&L ($)", pnl],
     [],
     ["By session", "Trades", "TP", "P&L ($)"],
@@ -682,7 +732,8 @@ function nextLogTime(from) {
   return t.getTime();
 }
 // True when today's log doesn't yet have the bar that just closed (e.g. 12:50 at 12:50:05).
-const logIsBehind = () => selected === todayStr() && lastLogLine.date === selected && lastLogLine.t < hhmm(barStart(Date.now()));
+const prevBar = () => hhmm(new Date(barStart(Date.now()).getTime() - 5 * 60000));
+const logIsBehind = () => selected === todayStr() && lastLogLine.date === selected && lastLogLine.t === prevBar();
 
 function markChecked() {
   nextLog = nextLogTime(Date.now());
@@ -729,7 +780,14 @@ async function refreshLog(isFollowUp) {
     updateRefreshInfo();
   }
 }
+function updateClock() {
+  const now = new Date();
+  $("clock").textContent = now.toLocaleTimeString("en-GB");
+  const left = Math.max(0, Math.ceil((barStart(now.getTime()).getTime() + 5 * 60000 - now.getTime()) / 1000));
+  $("barLeft").textContent = `bar closes in ${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+}
 function tick() {
+  updateClock();
   if (document.hidden) return;
   if ($("autoRefresh").checked) {
     const now = Date.now();
