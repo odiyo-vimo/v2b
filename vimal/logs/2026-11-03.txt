@@ -44,3 +44,4 @@
 2026-11-03 14:25:00  SHORT 6 @ 28293.25 | stop 28314.75 | TP 1R 28271.75 | risk $258.00
 2026-11-03 14:25:00  Trade closed: TP +$258.00 (Profit target @ 28271.75)
 2026-11-03 14:30:00  Skipped: signal bar is a pin bar.
+2026-11-03 14:35:00  LONG 4 @ 28244.5 | stop 28211 | TP 1R 28278 | risk $268.00
