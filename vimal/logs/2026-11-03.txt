@@ -84,3 +84,4 @@
 2026-11-03 16:50:00  No signal: NQ 12-26 volume 3382 <= previous 3895
 2026-11-03 16:50:00  Pending entry not filled after 3 bars, cancelling.
 2026-11-03 16:55:00  LONG 8 @ 28319.25 | stop 28302.25 | TP 1R 28336.25 | risk $272.00
+2026-11-03 17:00:00  No signal: NQ 12-26 volume 3409 <= previous 4723
