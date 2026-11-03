@@ -35,3 +35,4 @@
 2026-11-03 13:50:00  Skipped: signal bar is a pin bar.
 2026-11-03 13:55:00  No signal: NQ 12-26 volume 3639 <= previous 5174
 2026-11-03 14:00:00  No signal: NQ 12-26 volume 2244 <= previous 3639
+2026-11-03 14:05:00  SHORT 10 @ 28309.25 | stop 28324 | TP 1R 28294.5 | risk $295.00
