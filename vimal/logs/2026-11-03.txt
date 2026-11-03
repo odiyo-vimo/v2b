@@ -123,3 +123,4 @@
 2026-11-03 19:05:00  SHORT 15 @ 28389 | stop 28398.75 | TP 1R 28379.25 | risk $292.50
 2026-11-03 19:10:00  Newer signal replaces pending entry at 28389.
 2026-11-03 19:10:00  SHORT 13 @ 28369.5 | stop 28381 | TP 1R 28358 | risk $299.00 (replaced previous)
+2026-11-03 19:15:00  Skipped: signal bar is a pin bar.
