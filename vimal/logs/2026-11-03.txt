@@ -144,3 +144,6 @@
 2026-11-03 20:10:00  LONG 9 @ 28262.5 | stop 28246.75 | TP 1R 28278.25 | risk $283.50 (replaced previous)
 2026-11-03 20:15:00  Newer opposite signal replaces pending entry.
 2026-11-03 20:15:00  Cancelling pending entry for newer opposite signal.
+2026-11-03 20:15:00  SHORT 13 @ 28286.25 | stop 28297.5 | TP 1R 28275 | risk $292.50
+2026-11-03 20:15:00  Trade closed: SL -$294.00 (Stop loss @ 28297.5)
+2026-11-03 20:20:00  LONG 6 @ 28278.75 | stop 28256.25 | TP 1R 28301.25 | risk $270.00
