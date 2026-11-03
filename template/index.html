@@ -59,7 +59,11 @@ header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content:
 .badge { font-family: var(--font-data); font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
 .badge.live { color: var(--profit); border-color: var(--profit); }
 .badge.sample { color: var(--flat); border-color: var(--flat); }
-.refresh { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.titleblock { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.back { align-self: flex-start; font-size: 0.85rem; color: var(--accent); text-decoration: none; margin-bottom: 6px; }
+.back:hover { text-decoration: underline; }
+.back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.refresh { margin-top: 4px; }
 .refresh .num { font-size: 0.8rem; }
 button.small { font-size: 0.8rem; padding: 3px 10px; }
 
@@ -136,18 +140,19 @@ td.r, th.r { text-align: right; }
 <body>
 <div class="wrap">
   <header>
-    <div>
+    <div class="titleblock">
+      <a class="back" href="../">← All traders</a>
       <div class="eyebrow">V2B Trade Journal</div>
       <h1 id="trader">Trader</h1>
       <div class="sub">
         <span id="instrument">MNQ · 5 minute</span>
         <span id="updated">Loading…</span>
         <span id="mode" class="badge">…</span>
-        <span class="refresh">
-          <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
-          <span id="refreshInfo" class="num"></span>
-          <button type="button" id="refreshNow" class="small">Refresh now</button>
-        </span>
+      </div>
+      <div class="sub refresh">
+        <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
+        <span id="refreshInfo" class="num"></span>
+        <button type="button" id="refreshNow" class="small">Refresh now</button>
       </div>
     </div>
     <div class="controls">
