@@ -128,3 +128,5 @@
 2026-11-03 19:20:00  Trade closed: TP +$299.00 (Profit target @ 28358)
 2026-11-03 19:25:00  SHORT 10 @ 28361 | stop 28376 | TP 1R 28346 | risk $300.00
 2026-11-03 19:30:00  No signal: NQ 12-26 volume 3294 <= previous 5068
+2026-11-03 19:35:00  Newer signal replaces pending entry at 28361.
+2026-11-03 19:35:00  SHORT 16 @ 28324.5 | stop 28333.75 | TP 1R 28315.25 | risk $296.00 (replaced previous)
