@@ -14,3 +14,5 @@
 2026-11-03 12:25:00  LONG 10 @ 28198.75 | stop 28184 | TP 1R 28213.5 | risk $295.00 (replaced previous)
 2026-11-03 12:30:00  Newer signal replaces pending entry at 28198.75.
 2026-11-03 12:30:00  LONG 12 @ 28217 | stop 28204.75 | TP 1R 28229.25 | risk $294.00 (replaced previous)
+2026-11-03 12:30:00  Break-even: 38.2% reached, stop moved to 28218
+2026-11-03 12:40:00  No signal: NQ 12-26 volume 1079 <= previous 1198
