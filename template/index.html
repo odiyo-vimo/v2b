@@ -436,9 +436,18 @@ function renderSessions(trades) {
     keys.map((k) => `<tr><td>${esc(k)}</td><td class="r num">${by[k].n}</td><td class="r num">${by[k].tp}</td><td class="r num ${cls(by[k].pnl)}">${money(by[k].pnl)}</td></tr>`).join("") + `</tbody>`;
 }
 
+// The log only arrives every 5 minutes, but trades are checked every 2. If a closed
+// trade already matches the order/trade the log says is open (same side, entry at
+// or after the order's bar, entry price within a point), it has finished: hide it.
+function liveTradeIsDone(l) {
+  return (currentDay.trades || []).some((t) =>
+    String(t.direction || "").toUpperCase() === l.side &&
+    (t.entry_time || "").slice(11, 16) >= (l.since || "") &&
+    Math.abs(Number(t.entry) - Number(l.price)) <= 1);
+}
 function liveRow() {
   const l = liveTrade;
-  if (!l || selected !== todayStr()) return "";
+  if (!l || selected !== todayStr() || liveTradeIsDone(l)) return "";
   const chip = l.state === "live" ? `<span class="chip LIVE"><span class="livedot"></span>LIVE</span>` : `<span class="chip PENDING">PENDING</span>`;
   const label = l.state === "live" ? "In progress" : "Order working";
   return `<tr class="live"><td class="num">–</td><td class="num">${esc(l.since || "")}</td><td class="num note">${label}</td><td></td>
