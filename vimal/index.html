@@ -412,13 +412,13 @@ function renderTrades(trades) {
   // Latest trade first; # stays the trade's number in the day (1 = first trade).
   const rows = trades.map((t, i) => ({ t, n: i + 1 })).reverse();
   $("trades").innerHTML = `<thead><tr>
-      <th>#</th><th>Entry</th><th>Exit</th><th>Session</th><th>Side</th><th class="r">Qty</th>
+      <th>#</th><th>Entry</th><th>Exit</th><th>Session</th><th>Account</th><th>Side</th><th class="r">Qty</th>
       <th class="r">Entry price</th><th class="r">Exit price</th><th class="r">Points</th><th>Result</th>
       <th class="r">R</th><th class="r">P&amp;L</th><th class="r">Cumulative P&amp;L</th>
     </tr></thead><tbody>` +
     rows.map(({ t, n }) => `<tr>
       <td class="num">${n}</td><td class="num">${time(t.entry_time)}</td><td class="num">${time(t.exit_time)}</td>
-      <td>${esc(t.session)}</td><td><span class="dir ${esc(t.direction)}">${esc(t.direction).toUpperCase()}</span></td>
+      <td>${esc(t.session)}</td><td>${esc(t.account || "–")}</td><td><span class="dir ${esc(t.direction)}">${esc(t.direction).toUpperCase()}</span></td>
       <td class="r num">${t.contracts}</td><td class="r num">${Number(t.entry).toFixed(2)}</td><td class="r num">${Number(t.exit).toFixed(2)}</td>
       <td class="r num ${cls(t.pnl_points)}">${isFinite(t.pnl_points) && t.pnl_points !== null ? signed(t.pnl_points, 2) : "–"}</td>
       <td><span class="chip ${esc(t.result)}">${esc(t.result)}</span></td>
