@@ -20,3 +20,6 @@
 2026-11-03 12:50:00  SHORT 10 @ 28232.5 | stop 28247 | TP 1R 28218 | risk $290.00
 2026-11-03 12:55:00  Trade closed: TP +$290.00 (Profit target @ 28218)
 2026-11-03 13:00:00  No signal: NQ 12-26 volume 791 <= previous 1135
+2026-11-03 13:05:00  SHORT 12 @ 28220.25 | stop 28232.25 | TP 1R 28208.25 | risk $288.00
+2026-11-03 13:05:00  Trade closed: TP +$288.00 (Profit target @ 28208.25)
+2026-11-03 13:10:00  No signal: NQ 12-26 volume 1024 <= previous 1100
