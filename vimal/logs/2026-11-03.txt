@@ -110,3 +110,5 @@
 2026-11-03 18:10:00  Newer signal replaces pending entry at 28366.25.
 2026-11-03 18:10:00  LONG 11 @ 28396 | stop 28383 | TP 1R 28409 | risk $286.00 (replaced previous)
 2026-11-03 18:15:00  No signal: NQ 12-26 volume 3406 <= previous 5015
+2026-11-03 18:15:00  Trade closed: SL -$287.50 (Stop loss @ 28383)
+2026-11-03 18:20:00  SHORT 9 @ 28407.5 | stop 28423.5 | TP 1R 28391.5 | risk $288.00
