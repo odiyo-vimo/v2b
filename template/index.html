@@ -59,6 +59,9 @@ header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content:
 .badge { font-family: var(--font-data); font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
 .badge.live { color: var(--profit); border-color: var(--profit); }
 .badge.sample { color: var(--flat); border-color: var(--flat); }
+.refresh { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.refresh .num { font-size: 0.8rem; }
+button.small { font-size: 0.8rem; padding: 3px 10px; }
 
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 button, input[type="date"], select {
@@ -140,6 +143,11 @@ td.r, th.r { text-align: right; }
         <span id="instrument">MNQ · 5 minute</span>
         <span id="updated">Loading…</span>
         <span id="mode" class="badge">…</span>
+        <span class="refresh">
+          <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
+          <span id="refreshInfo" class="num"></span>
+          <button type="button" id="refreshNow" class="small">Refresh now</button>
+        </span>
       </div>
     </div>
     <div class="controls">
@@ -199,7 +207,6 @@ td.r, th.r { text-align: right; }
 // GitHub allows 60 API reads an hour per network, so the page checks every
 // 2 minutes and only polls the tab that is open.
 const REFRESH_SECONDS = 120;
-const LOG_REFRESH_SECONDS = 120;
 const ON_GITHUB = /\.github\.io$/i.test(location.hostname);
 const BRANCH = "main";
 
@@ -209,7 +216,6 @@ let selected = null;    // "YYYY-MM-DD"
 let sampleMode = false;
 let timer = null;
 let view = "trades";    // "trades" | "logs"
-let logTimer = null;
 const repoCache = {};   // repo path -> { etag, text }
 const dayCache = {};    // date -> { sig, data }
 
@@ -300,7 +306,7 @@ async function loadIndex() {
     sampleMode = !ON_GITHUB;
     if (sampleMode) days = sampleFor().index.days;
   }
-  $("mode").textContent = sampleMode ? "Sample data" : "Live from GitHub";
+  $("mode").textContent = sampleMode ? "Sample data" : "Powered by V2B";
   $("mode").className = "badge " + (sampleMode ? "sample" : "live");
 }
 let SAMPLE = null;
@@ -453,7 +459,7 @@ async function renderLog() {
     return;
   }
   const last = lines[lines.length - 1].t;
-  $("logStatus").textContent = `${lines.length} entries · last at ${last}` + (sampleMode ? " · sample" : ` · checks for new entries every ${LOG_REFRESH_SECONDS / 60} minutes`);
+  $("logStatus").textContent = `${lines.length} entries · last at ${last}` + (sampleMode ? " · sample" : ``);
   $("log").innerHTML = shown.map((l) => `<li class="${classify(l.msg)}"><span class="t">${esc(l.t)}</span><span class="m">${esc(l.msg)}</span></li>`).join("");
 }
 function sampleLog(date) {
@@ -483,18 +489,14 @@ function setView(v) {
   $("tradesView").hidden = v !== "trades";
   $("logsView").hidden = v !== "logs";
   try { localStorage.setItem("v2b-view", v); } catch {}
-  clearInterval(logTimer);
-  if (v === "logs") {
-    renderLog();
-    logTimer = setInterval(() => { if (!document.hidden && !sampleMode) renderLog(); }, LOG_REFRESH_SECONDS * 1000);
-  }
+  if (v === "logs") renderLog();
   $("footnote").textContent = v === "logs"
     ? "The log lists V2B's decision on each 5-minute bar while it runs live. Times are the trading PC's time."
     : footnoteTrades();
 }
 const footnoteTrades = () => sampleMode
   ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones every 2 minutes."
-  : `P&L is gross, before commission. The page checks for new trades every ${REFRESH_SECONDS / 60} minutes.`;
+  : "P&L is gross, before commission.";
 
 async function render() {
   const day = await loadDay(selected);
@@ -537,13 +539,55 @@ window.addEventListener("hashchange", () => { const h = location.hash.slice(1); 
   selected = DATE_RE.test(h) ? h : latestDay();
   setView(savedView === "logs" ? "logs" : "trades");
   select(selected);
-  timer = setInterval(async () => {
-    if (sampleMode || document.hidden || view !== "trades") return;
-    const latest = days.length ? days[days.length - 1].date : null;
-    await loadIndex();
-    if (selected === latest || selected === new Date().toISOString().slice(0, 10)) render(); else renderDays();
-  }, REFRESH_SECONDS * 1000);
+  try { $("autoRefresh").checked = localStorage.getItem("v2b-auto-refresh") !== "off"; } catch {}
+  markChecked();
+  setInterval(tick, 1000);
 })();
+
+// ---- Auto-refresh ---------------------------------------------------------------
+// Checks for new trades or log lines every 2 minutes (only the open tab), pauses
+// while the browser tab is hidden and catches up as soon as it is shown again.
+let nextRefresh = 0, lastChecked = null, refreshing = false;
+function markChecked() {
+  lastChecked = new Date();
+  nextRefresh = Date.now() + REFRESH_SECONDS * 1000;
+  updateRefreshInfo();
+}
+function updateRefreshInfo() {
+  const hhmm = (d) => d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  if (refreshing) { $("refreshInfo").textContent = "Checking…"; return; }
+  const checked = lastChecked ? `Checked ${hhmm(lastChecked)}` : "";
+  if (!$("autoRefresh").checked) { $("refreshInfo").textContent = checked; return; }
+  const left = Math.max(0, Math.round((nextRefresh - Date.now()) / 1000));
+  $("refreshInfo").textContent = `${checked} · next in ${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+}
+async function refreshNow() {
+  if (refreshing) return;
+  refreshing = true; updateRefreshInfo();
+  try {
+    if (!sampleMode) {
+      if (view === "logs") await renderLog();
+      else {
+        const latest = days.length ? days[days.length - 1].date : null;
+        await loadIndex();
+        if (selected === latest || selected === new Date().toISOString().slice(0, 10)) await render(); else renderDays();
+      }
+    }
+  } finally {
+    refreshing = false; markChecked();
+  }
+}
+function tick() {
+  if (document.hidden) return;
+  if ($("autoRefresh").checked && Date.now() >= nextRefresh) refreshNow();
+  else updateRefreshInfo();
+}
+$("refreshNow").addEventListener("click", refreshNow);
+$("autoRefresh").addEventListener("change", () => {
+  try { localStorage.setItem("v2b-auto-refresh", $("autoRefresh").checked ? "on" : "off"); } catch {}
+  nextRefresh = Date.now() + REFRESH_SECONDS * 1000; updateRefreshInfo();
+});
+document.addEventListener("visibilitychange", () => { if (!document.hidden && $("autoRefresh").checked && Date.now() >= nextRefresh) refreshNow(); });
 </script>
 </body>
 </html>
