@@ -1,16 +1,19 @@
 # Publishes the V2B Trade Journal site with GitHub Actions.
 # Set the repo's Settings -> Pages -> Source to "GitHub Actions".
 #
-# Trade uploads (index.html, <name>/data/...) publish the site.
-# Log uploads (<name>/logs/...) are ignored here, so the every-5-minute log
-# updates never use up builds; the page reads logs straight from the repo.
+# The site is only republished when a page changes (index.html,
+# template/index.html, or a trader's <name>/index.html, which V2B creates once).
+# Data uploads from V2B (<name>/data/..., <name>/logs/..., users.json) are
+# ignored: the pages read those files straight from the repo.
 name: Publish V2B pages
 
 on:
   push:
     branches: [main]
     paths-ignore:
+      - "*/data/**"
       - "*/logs/**"
+      - "users.json"
   workflow_dispatch:
 
 permissions:

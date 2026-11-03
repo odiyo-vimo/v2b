@@ -124,9 +124,13 @@ td.r, th.r { text-align: right; }
 </div>
 <script>
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
-fetch("users.json?t=" + Date.now(), { cache: "no-store" })
-  .then((r) => (r.ok ? r.json() : { users: [] }))
-  .catch(() => ({ users: [] }))
+// users.json is updated by V2B without republishing the site, so read it from the repo.
+const owner = location.hostname.split(".")[0];
+const repo = location.pathname.split("/").filter(Boolean)[0] || `${owner}.github.io`;
+fetch(`https://api.github.com/repos/${owner}/${repo}/contents/users.json?ref=main`, { headers: { Accept: "application/vnd.github.raw+json" }, cache: "no-store" })
+  .then((r) => { if (r.ok) return r.json(); if (r.status === 404) return { users: [] }; throw new Error(r.status); })
+  .catch(() => fetch(`https://raw.githubusercontent.com/${owner}/${repo}/main/users.json?t=${Date.now()}`, { cache: "no-store" })
+    .then((r) => (r.ok ? r.json() : { users: [] })).catch(() => ({ users: [] })))
   .then((u) => {
     const users = (u.users || []).slice().sort();
     document.getElementById("list").innerHTML = users.length

@@ -17,5 +17,6 @@ Each trader's V2B strategy uploads, using its own fine-grained token:
 | `<name>/index.html` | copied from `template/index.html` when it changes |
 | `users.json` | when a trader uploads for the first time |
 
-`.github/workflows/pages.yml` publishes the site on each push, except log
-uploads, which the page reads straight from the repo.
+`.github/workflows/pages.yml` republishes the site only when a page changes.
+Data uploads (`<name>/data`, `<name>/logs`, `users.json`) don't republish it;
+the pages read those files straight from the repo through GitHub's API.
