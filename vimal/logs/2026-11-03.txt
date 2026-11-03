@@ -28,3 +28,4 @@
 2026-11-03 13:20:00  Trade closed: TP +$299.00 (Profit target @ 28224)
 2026-11-03 13:25:00  No signal: NQ 12-26 volume 1076 <= previous 1689
 2026-11-03 13:30:00  LONG 3 @ 28264.5 | stop 28218.25 | TP 1R 28310.75 | risk $277.50
+2026-11-03 13:35:00  Skipped: signal bar is a pin bar.
