@@ -519,7 +519,7 @@ async function renderLog() {
   $("logTitle").textContent = `Decision log · ${fmtDay(selected)}`;
   let text;
   try { text = await fetchLog(selected); }
-  catch { $("logStatus").textContent = "Couldn't reach GitHub just now. The log will retry in two minutes."; return; }
+  catch { $("logStatus").hidden = false; $("logStatus").textContent = "Couldn't reach GitHub just now. The log will retry in two minutes."; return; }
   const hideQuiet = $("hideQuiet").checked;
   const lines = text.split(/\r?\n/).filter((l) => l.trim()).map((l) => {
     const m = l.match(/^\d{4}-\d{2}-\d{2} (\d{2}:\d{2})(?::\d{2})?\s+(.*)$/);
@@ -529,6 +529,7 @@ async function renderLog() {
   if (!lines.length) {
     lastLogLine = { date: selected, t: "" };
     if (liveTrade) { liveTrade = null; if (currentDay.date === selected) renderTrades(currentDay.trades); }
+    $("logStatus").hidden = false;
     $("logStatus").textContent = "No log for this date yet. V2B uploads its log every 5 minutes while it's running live.";
     $("log").innerHTML = "";
     return;
@@ -538,9 +539,9 @@ async function renderLog() {
   const before = JSON.stringify(liveTrade);
   liveTrade = selected === todayStr() ? findLiveTrade(lines) : null;
   if (JSON.stringify(liveTrade) !== before && currentDay.date === selected) renderTrades(currentDay.trades);
-  const how = sampleMode || !fetchInfo.at ? (sampleMode ? " · sample" : "")
-    : ` · checked ${fetchInfo.at.toLocaleTimeString("en-GB")} via ${fetchInfo.via}` + (fetchInfo.left !== null ? ` (${fetchInfo.left} GitHub reads left this hour)` : "");
-  $("logStatus").textContent = `${lines.length} entries · last at ${last}${how}`;
+  // The status line is only used for "no log yet" and connection messages.
+  $("logStatus").textContent = "";
+  $("logStatus").hidden = true;
   $("log").innerHTML = shown.map((l) => `<li class="${classify(l.msg)}"><span class="t">${esc(l.t)}</span><span class="m">${esc(l.msg)}</span></li>`).join("");
 }
 function sampleLog(date) {
