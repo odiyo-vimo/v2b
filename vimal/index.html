@@ -53,17 +53,18 @@ h2 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spa
 .num { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
 .pos { color: var(--profit); } .neg { color: var(--loss); } .zero { color: var(--muted); }
 
-header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; }
+header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .eyebrow { font-family: var(--font-display); font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
 .sub { color: var(--muted); font-size: 0.9rem; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; }
 .badge { font-family: var(--font-data); font-size: 0.72rem; padding: 2px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
 .badge.live { color: var(--profit); border-color: var(--profit); }
 .badge.sample { color: var(--flat); border-color: var(--flat); }
+.dates { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
 .titleblock { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .back { align-self: flex-start; font-size: 0.85rem; color: var(--accent); text-decoration: none; margin-bottom: 6px; }
 .back:hover { text-decoration: underline; }
 .back:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.refresh { margin-top: 4px; }
+.refresh { margin-top: 2px; }
 .refresh .num { font-size: 0.8rem; }
 button.small { font-size: 0.8rem; padding: 3px 10px; }
 
@@ -149,21 +150,23 @@ td.r, th.r { text-align: right; }
         <span id="updated">Loading…</span>
         <span id="mode" class="badge">…</span>
       </div>
-      <div class="sub refresh">
-        <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
-        <span id="refreshInfo" class="num"></span>
-        <button type="button" id="refreshNow" class="small">Refresh now</button>
-      </div>
     </div>
+    <div class="sub refresh">
+      <label class="check"><input type="checkbox" id="autoRefresh" checked> Auto-refresh</label>
+      <span id="refreshInfo" class="num"></span>
+      <button type="button" id="refreshNow" class="small">Refresh now</button>
+    </div>
+  </header>
+
+  <div class="dates">
     <div class="controls">
       <button id="prev" type="button" aria-label="Previous trading day">◀ Prev</button>
       <input id="date" type="date" aria-label="Choose a date">
       <button id="next" type="button" aria-label="Next trading day">Next ▶</button>
       <button id="today" type="button">Latest</button>
     </div>
-  </header>
-
-  <div class="days" id="days" role="group" aria-label="Recent trading days"></div>
+    <div class="days" id="days" role="group" aria-label="Recent trading days"></div>
+  </div>
 
   <div class="views" role="tablist" aria-label="View">
     <button type="button" role="tab" id="tabTrades" aria-selected="true" aria-controls="tradesView">Trades</button>
@@ -405,17 +408,22 @@ function renderTrades(trades) {
   $("tradesTitle").textContent = `Trades · ${fmtDay(selected)}`;
   if (!trades.length) { $("trades").innerHTML = `<tr><td class="empty">No trades logged on this date.</td></tr>`; return; }
   const time = (s) => (s || "").slice(11, 16);
+  const signed = (v, dp) => (v > 0 ? "+" : "") + Number(v).toFixed(dp);
+  // Latest trade first; # stays the trade's number in the day (1 = first trade).
+  const rows = trades.map((t, i) => ({ t, n: i + 1 })).reverse();
   $("trades").innerHTML = `<thead><tr>
       <th>#</th><th>Entry</th><th>Exit</th><th>Session</th><th>Side</th><th class="r">Qty</th>
-      <th class="r">Entry price</th><th class="r">Exit price</th><th>Result</th><th class="r">P&amp;L</th><th class="r">R</th><th class="r">Cumulative</th>
+      <th class="r">Entry price</th><th class="r">Exit price</th><th class="r">Points</th><th>Result</th>
+      <th class="r">P&amp;L</th><th class="r">R</th><th class="r">Cumulative P&amp;L</th>
     </tr></thead><tbody>` +
-    trades.map((t, i) => `<tr>
-      <td class="num">${i + 1}</td><td class="num">${time(t.entry_time)}</td><td class="num">${time(t.exit_time)}</td>
+    rows.map(({ t, n }) => `<tr>
+      <td class="num">${n}</td><td class="num">${time(t.entry_time)}</td><td class="num">${time(t.exit_time)}</td>
       <td>${esc(t.session)}</td><td><span class="dir ${esc(t.direction)}">${esc(t.direction).toUpperCase()}</span></td>
       <td class="r num">${t.contracts}</td><td class="r num">${Number(t.entry).toFixed(2)}</td><td class="r num">${Number(t.exit).toFixed(2)}</td>
+      <td class="r num ${cls(t.pnl_points)}">${isFinite(t.pnl_points) && t.pnl_points !== null ? signed(t.pnl_points, 2) : "–"}</td>
       <td><span class="chip ${esc(t.result)}">${esc(t.result)}</span></td>
       <td class="r num ${cls(t.pnl)}">${money(t.pnl)}</td>
-      <td class="r num ${cls(t.r)}">${isFinite(t.r) ? (t.r >= 0 ? "+" : "") + Number(t.r).toFixed(2) : "–"}</td>
+      <td class="r num ${cls(t.r)}">${isFinite(t.r) && t.r !== null ? signed(t.r, 2) : "–"}</td>
       <td class="r num ${cls(t.cum_pnl)}">${money(t.cum_pnl ?? 0)}</td>
     </tr>`).join("") + `</tbody>`;
 }
