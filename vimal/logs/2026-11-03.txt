@@ -153,3 +153,5 @@
 2026-11-03 20:35:00  Cancelling pending entry for newer opposite signal.
 2026-11-03 20:35:00  SHORT 16 @ 28313.25 | stop 28322.25 | TP 1R 28304.25 | risk $288.00
 2026-11-03 20:40:00  No signal: NQ 12-26 volume 2778 <= previous 3773
+2026-11-03 20:40:00  Trade closed: SL -$289.50 (Stop loss @ 28322.25)
+2026-11-03 20:45:00  LONG 15 @ 28312.25 | stop 28302.5 | TP 1R 28322 | risk $292.50
