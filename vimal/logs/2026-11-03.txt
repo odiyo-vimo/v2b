@@ -151,3 +151,5 @@
 2026-11-03 20:30:00  No signal: NQ 12-26 volume 3149 <= previous 3766
 2026-11-03 20:35:00  Newer opposite signal replaces pending entry.
 2026-11-03 20:35:00  Cancelling pending entry for newer opposite signal.
+2026-11-03 20:35:00  SHORT 16 @ 28313.25 | stop 28322.25 | TP 1R 28304.25 | risk $288.00
+2026-11-03 20:40:00  No signal: NQ 12-26 volume 2778 <= previous 3773
