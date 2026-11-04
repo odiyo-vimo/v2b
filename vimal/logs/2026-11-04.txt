@@ -150,3 +150,4 @@
 2026-11-04 07:30:00  LONG 12 @ 28218.5 | stop 28206.25 | TP 1R 28230.75 | risk $294.00
 2026-11-04 07:30:00  Entry filled: LONG 4 @ 28218.50 | stop 28206.25 | target 28230.75
 2026-11-04 07:30:00  Trade closed: TP +$294.00 (Profit target @ 28230.75)
+2026-11-04 07:35:00  Skipped: signal bar is a pin bar.
