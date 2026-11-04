@@ -198,15 +198,6 @@ td.cum { color: var(--muted); }
     </div>
   </header>
 
-  <div class="dates">
-    <div class="controls">
-      <button id="prev" type="button" aria-label="Previous trading day">◀ Prev</button>
-      <input id="date" type="date" aria-label="Choose a date">
-      <button id="next" type="button" aria-label="Next trading day">Next ▶</button>
-      <button id="today" type="button">Latest</button>
-    </div>
-  </div>
-
   <div class="views" role="tablist" aria-label="View">
     <button type="button" role="tab" id="tabTrades" aria-selected="true" aria-controls="tradesView">Trades</button>
     <button type="button" role="tab" id="tabLogs" aria-selected="false" aria-controls="logsView">Logs</button>
@@ -397,13 +388,7 @@ async function loadDay(date) {
 }
 
 // ---- Rendering ----------------------------------------------------------------
-function renderDays() {
-  // The recent-days strip was replaced by the calendar; only the date controls remain.
-  $("prev").disabled = !days.some((d) => d.date < selected);
-  $("next").disabled = !days.some((d) => d.date > selected);
-  if (days.length) $("date").min = days[0].date;
-  $("date").max = new Date().toISOString().slice(0, 10);
-}
+function renderDays() {}   // days are picked from the calendar
 
 function renderSummary(trades) {
   const n = trades.length;
@@ -725,7 +710,6 @@ async function render(withLog = true) {
   currentDay = { date: selected, instrument: day.instrument || "", trades };
   if (day.instrument) $("instrument").textContent = `${day.instrument} · 5 minute`;
   $("updated").textContent = day.updated ? `Updated ${day.updated.slice(11, 16)} on ${fmtDay(day.updated.slice(0, 10))}` : "No updates for this date";
-  $("date").value = selected;
   renderDays(); renderSummary(trades);
   if (!days.length && !sampleMode) $("updated").textContent = "No trades uploaded yet"; renderChart(trades); renderSessions(trades); renderTrades(trades); renderCalendar();
   if (view === "trades") $("footnote").textContent = footnoteTrades();
@@ -742,13 +726,9 @@ function select(date) {
   render();
 }
 
-$("date").addEventListener("change", (e) => select(e.target.value));
 $("tabTrades").addEventListener("click", () => setView("trades"));
 $("tabLogs").addEventListener("click", () => setView("logs"));
 $("hideQuiet").addEventListener("change", () => { try { localStorage.setItem("v2b-hide-quiet", $("hideQuiet").checked ? "1" : ""); } catch {} renderLog(); });
-$("prev").addEventListener("click", () => { const p = [...days].reverse().find((d) => d.date < selected); if (p) select(p.date); });
-$("next").addEventListener("click", () => { const n = days.find((d) => d.date > selected); if (n) select(n.date); });
-$("today").addEventListener("click", () => days.length && select(days[days.length - 1].date));
 window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (DATE_RE.test(h) && h !== selected) select(h); });
 
 (async function start() {
