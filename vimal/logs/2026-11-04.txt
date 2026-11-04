@@ -286,3 +286,4 @@
 2026-11-04 14:30:00  Entry filled: SHORT 1 @ 28454.00 | stop 28472.00 | target 28436.00
 2026-11-04 14:30:00  Trade closed: SL -$289.50 (Stop loss @ 28472.25)
 2026-11-04 14:35:00  Skipped: signal bar is a pin bar.
+2026-11-04 14:40:00  No signal: NQ 12-26 volume 20975 <= previous 25721
