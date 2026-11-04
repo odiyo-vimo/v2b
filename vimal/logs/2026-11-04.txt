@@ -70,3 +70,4 @@
 2026-11-04 03:45:00  No signal: NQ 12-26 volume 850 <= previous 1151
 2026-11-04 03:50:00  No signal: NQ 12-26 volume 704 <= previous 850
 2026-11-04 03:55:00  SHORT 10 @ 27714 | stop 27728 | TP 1R 27700 | risk $280.00
+2026-11-04 03:55:00  Entry filled: SHORT 3 @ 27714.00 | stop 27728.00 | target 27700.00
