@@ -453,7 +453,7 @@ function liveRow() {
   return `<tr class="live"><td class="num">–</td><td class="num">${esc(l.since || "")}</td><td class="num note">${label}</td><td></td>
     <td><span class="dir ${l.side === "LONG" ? "Long" : "Short"}">${esc(l.side)}</span></td><td class="r num">${l.qty || ""}</td>
     <td class="r num">${l.price ? Number(l.price).toFixed(2) : ""}</td><td class="r num note">${l.stop ? "SL " + Number(l.stop).toFixed(2) : ""}</td>
-    <td class="r num note">${l.target ? "TP " + Number(l.target).toFixed(2) : ""}</td><td>${chip}</td><td></td><td></td><td></td></tr>`;
+    <td class="r num note">${l.target ? "TP " + Number(l.target).toFixed(2) : ""}</td><td>${chip}</td><td></td><td></td><td></td><td></td></tr>`;
 }
 function renderTrades(trades) {
   $("tradesTitle").textContent = `Trades · ${fmtDay(selected)}`;
@@ -465,7 +465,7 @@ function renderTrades(trades) {
   $("trades").innerHTML = `<thead><tr>
       <th>#</th><th>Entry</th><th>Exit</th><th>Session</th><th>Side</th><th class="r">Qty</th>
       <th class="r">Entry price</th><th class="r">Exit price</th><th class="r">Points</th><th>Result</th>
-      <th class="r">R</th><th class="r">P&amp;L</th><th class="r">Cumulative P&amp;L</th>
+      <th class="r">R</th><th class="r">Fees</th><th class="r" title="After commission">P&amp;L</th><th class="r">Cumulative P&amp;L</th>
     </tr></thead><tbody>` + liveRow() +
     rows.map(({ t, n }) => `<tr>
       <td class="num">${n}</td><td class="num">${time(t.entry_time)}</td><td class="num">${time(t.exit_time)}</td>
@@ -474,6 +474,7 @@ function renderTrades(trades) {
       <td class="r num ${cls(t.pnl_points)}">${isFinite(t.pnl_points) && t.pnl_points !== null ? signed(t.pnl_points, 2) : "–"}</td>
       <td><span class="chip ${esc(t.result)}">${esc(t.result)}</span></td>
       <td class="r num ${cls(t.r)}">${isFinite(t.r) && t.r !== null ? signed(t.r, 2) : "–"}</td>
+      <td class="r num note">${t.commission > 0 ? "$" + Number(t.commission).toFixed(2) : "–"}</td>
       <td class="r num ${cls(t.pnl)}">${money(t.pnl)}</td>
       <td class="r num cum">${money(t.cum_pnl ?? 0)}</td>
     </tr>`).join("") + `</tbody>`;
@@ -587,7 +588,7 @@ function setView(v) {
 }
 const footnoteTrades = () => sampleMode
   ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones 5 seconds after each 5-minute bar."
-  : "P&L is gross, before commission.";
+  : "P&L is net: the commission your account charged (Fees) is already taken off. Trades recorded before 4 Nov 2026 have no fee data and show gross P&L.";
 
 let currentDay = { date: "", instrument: "", trades: [] };   // what the Trades tab is showing, for Download
 async function render(withLog = true) {
@@ -695,18 +696,18 @@ async function downloadDay() {
 
   // Trades sheet (same columns and order as the table: newest first)
   const time = (s) => (s || "").slice(11, 16);
-  const header = ["#", "Entry", "Exit", "Session", "Side", "Qty", "Entry price", "Exit price", "Points", "Result", "R", "P&L ($)", "Cumulative P&L ($)"];
+  const header = ["#", "Entry", "Exit", "Session", "Side", "Qty", "Entry price", "Exit price", "Points", "Result", "R", "Fees ($)", "P&L ($)", "Cumulative P&L ($)"];
   const rows = trades.map((t, i) => [i + 1, time(t.entry_time), time(t.exit_time), t.session || "", t.direction || "", Number(t.contracts),
     Number(t.entry), Number(t.exit), t.pnl_points === null ? null : Number(t.pnl_points), t.result || "",
-    t.r === null ? null : Number(t.r), Number(t.pnl), Number(t.cum_pnl ?? 0)]).reverse();
+    t.r === null ? null : Number(t.r), t.commission > 0 ? Number(t.commission) : null, Number(t.pnl), Number(t.cum_pnl ?? 0)]).reverse();
   const ws2 = XLSX.utils.aoa_to_sheet([header, ...rows]);
   for (let r = 2; r <= rows.length + 1; r++) {
     ["G", "H"].forEach((c) => fmt(ws2, c + r, "0.00"));
     fmt(ws2, "I" + r, "+0.00;-0.00"); fmt(ws2, "K" + r, "+0.00;-0.00");
-    fmt(ws2, "L" + r, "$#,##0.00;-$#,##0.00"); fmt(ws2, "M" + r, "$#,##0.00;-$#,##0.00");
+    ["L", "M", "N"].forEach((c) => fmt(ws2, c + r, "$#,##0.00;-$#,##0.00"));
   }
-  ws2["!cols"] = [4, 7, 7, 16, 7, 5, 11, 11, 8, 7, 7, 11, 17].map((w) => ({ wch: w }));
-  ws2["!autofilter"] = { ref: `A1:M${rows.length + 1}` };
+  ws2["!cols"] = [4, 7, 7, 16, 7, 5, 11, 11, 8, 7, 7, 8, 11, 17].map((w) => ({ wch: w }));
+  ws2["!autofilter"] = { ref: `A1:N${rows.length + 1}` };
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws1, "Summary");
