@@ -81,3 +81,4 @@
 2026-11-04 04:10:00  Trade closed: SL -$276.50 (Stop loss @ 27749)
 2026-11-04 04:15:00  LONG 6 @ 27723.75 | stop 27699.5 | TP 1R 27748 | risk $291.00
 2026-11-04 04:15:00  Entry filled: LONG 2 @ 27723.75 | stop 27699.50 | target 27748.00
+2026-11-04 04:15:00  Trade closed: SL -$291.00 (Stop loss @ 27699.5)
