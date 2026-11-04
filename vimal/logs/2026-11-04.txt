@@ -52,3 +52,4 @@
 2026-11-04 20:50:00  Entry filled: LONG 1 @ 28565.00 | stop 28549.75 (15.25 pts) | target 28580.25 (15.25 pts)
 2026-11-04 20:50:00  Trade closed: SL -$275.50 | -15.31 pts (Stop loss @ 28549.5)
 2026-11-04 20:55:00  SHORT 6 @ 28572.5 | stop 28596.25 (23.75 pts) | TP 1R 28548.75 (23.75 pts) | risk $285.00
+2026-11-04 20:55:00  Entry filled: SHORT 1 @ 28572.50 | stop 28596.25 (23.75 pts) | target 28548.75 (23.75 pts)
