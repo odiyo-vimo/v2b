@@ -46,3 +46,5 @@
 2026-11-04 20:35:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-04 20:40:00  SHORT 4 @ 28627.25 | stop 28657.5 (30.25 pts) | TP 1R 28597 (30.25 pts) | risk $242.00
 2026-11-04 20:45:00  No signal: NQ 12-26 volume 4515 <= previous 5918
+2026-11-04 20:50:00  Newer opposite signal replaces pending entry.
+2026-11-04 20:50:00  Cancelling pending entry for newer opposite signal.
