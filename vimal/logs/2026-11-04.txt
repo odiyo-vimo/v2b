@@ -192,3 +192,4 @@
 2026-11-04 09:45:00  Newer opposite signal replaces pending entry.
 2026-11-04 09:45:00  Cancelling pending entry for newer opposite signal.
 2026-11-04 09:45:00  SHORT 16 @ 28448.5 | stop 28457.75 | TP 1R 28439.25 | risk $296.00
+2026-11-04 09:45:00  Entry filled: SHORT 1 @ 28448.50 | stop 28457.75 | target 28439.25
