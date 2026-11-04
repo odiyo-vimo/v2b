@@ -250,3 +250,5 @@
 2026-11-04 12:40:00  In trade: LONG 7 @ 28429.00 | stop 28408.00 | target 28450.00 | open P&L +$0.00
 2026-11-04 12:40:00  Trade closed: SL -$294.00 (Stop loss @ 28408)
 2026-11-04 12:45:00  SHORT 9 @ 28419.5 | stop 28435.75 | TP 1R 28403.25 | risk $292.50
+2026-11-04 12:50:00  Newer signal replaces pending entry at 28419.5.
+2026-11-04 12:50:00  SHORT 7 @ 28380.5 | stop 28401.5 | TP 1R 28359.5 | risk $294.00 (replaced previous)
