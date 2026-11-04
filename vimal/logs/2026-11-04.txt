@@ -314,3 +314,4 @@
 2026-11-04 16:00:00  No signal: NQ 12-26 volume 11491 <= previous 15302
 2026-11-04 16:05:00  SHORT 4 @ 28639.5 | stop 28676.75 | TP 1R 28602.25 | risk $298.00
 2026-11-04 16:10:00  Skipped: signal bar is a pin bar.
+2026-11-04 16:10:00  Entry filled: SHORT 1 @ 28639.50 | stop 28676.75 | target 28602.25
