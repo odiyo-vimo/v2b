@@ -129,6 +129,10 @@ td.r, th.r { text-align: right; }
 td.cum { color: var(--muted); }
 .download { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
 
+.viewing { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.viewing .vlabel { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; padding: 4px 10px; border-radius: 999px; background: var(--profit-bg); color: var(--profit); }
+.viewing .vlabel.past { background: var(--line); color: var(--muted); }
+.viewing .vdate { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; }
 .calhead { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; }
 .calhead .mid { text-align: center; }
 .calhead .month { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; letter-spacing: 0.02em; }
@@ -197,6 +201,12 @@ td.cum { color: var(--muted); }
       <div class="clock num" aria-live="off"><span id="clock">--:--:--</span><span class="note" id="barLeft"></span></div>
     </div>
   </header>
+
+  <div class="viewing">
+    <span class="vlabel" id="viewLabel">Today</span>
+    <span class="vdate" id="viewDate"></span>
+    <button type="button" id="backToday" hidden>Back to today</button>
+  </div>
 
   <div class="views" role="tablist" aria-label="View">
     <button type="button" role="tab" id="tabTrades" aria-selected="true" aria-controls="tradesView">Trades</button>
@@ -390,6 +400,16 @@ async function loadDay(date) {
 // ---- Rendering ----------------------------------------------------------------
 function renderDays() {}   // days are picked from the calendar
 
+// Says whether the page shows today's results or an earlier day's.
+function renderViewing() {
+  const isToday = selected === todayStr();
+  const long = new Date(selected + "T12:00:00").toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  $("viewLabel").textContent = isToday ? "Today's results" : "Past day";
+  $("viewLabel").className = "vlabel" + (isToday ? "" : " past");
+  $("viewDate").textContent = long;
+  $("backToday").hidden = isToday;
+}
+
 function renderSummary(trades) {
   const n = trades.length;
   const count = (r) => trades.filter((t) => t.result === r).length;
@@ -464,7 +484,7 @@ function liveRow() {
   return `<tr class="live"><td class="num">–</td><td class="num">${esc(l.since || "")}</td><td class="num note">${label}</td><td></td><td></td>
     <td><span class="dir ${l.side === "LONG" ? "Long" : "Short"}">${esc(l.side)}</span></td><td class="r num">${l.qty || ""}</td>
     <td class="r num">${l.price ? Number(l.price).toFixed(2) : ""}</td><td class="r num note">${l.stop ? "SL " + Number(l.stop).toFixed(2) : ""}</td>
-    <td class="r num note">${l.target ? "TP " + Number(l.target).toFixed(2) : ""}</td><td>${chip}</td><td></td><td></td><td></td><td></td></tr>`;
+    <td class="r num note">${l.target ? "TP " + Number(l.target).toFixed(2) : ""}</td><td>${chip}</td><td></td><td></td><td></td></tr>`;
 }
 // Widen the page (centred, up to the window width) so the trades table fits without a
 // scrollbar. Below that width the table scrolls as before.
@@ -491,7 +511,7 @@ function renderTrades(trades) {
   $("trades").innerHTML = `<thead><tr>
       <th>#</th><th>Entry</th><th>Exit</th><th>Session</th><th>Mode</th><th>Side</th><th class="r">Qty</th>
       <th class="r">Entry price</th><th class="r">Exit price</th><th class="r">Points</th><th>Result</th>
-      <th class="r">R</th><th class="r">Fees</th><th class="r" title="After commission">P&amp;L</th><th class="r">Cumulative P&amp;L</th>
+      <th class="r">R</th><th class="r" title="After commission">P&amp;L</th><th class="r">Cumulative P&amp;L</th>
     </tr></thead><tbody>` + liveRow() +
     rows.map(({ t, n }) => `<tr>
       <td class="num">${n}</td><td class="num">${time(t.entry_time)}</td><td class="num">${time(t.exit_time)}</td>
@@ -500,7 +520,6 @@ function renderTrades(trades) {
       <td class="r num ${cls(t.pnl_points)}">${isFinite(t.pnl_points) && t.pnl_points !== null ? signed(t.pnl_points, 2) : "–"}</td>
       <td><span class="chip ${esc(t.result)}">${esc(t.result)}</span></td>
       <td class="r num ${cls(t.r)}">${isFinite(t.r) && t.r !== null ? signed(t.r, 2) : "–"}</td>
-      <td class="r num note">${t.commission > 0 ? "$" + Number(t.commission).toFixed(2) : "–"}</td>
       <td class="r num ${cls(t.pnl)}">${money(t.pnl)}</td>
       <td class="r num cum">${money(t.cum_pnl ?? 0)}</td>
     </tr>`).join("") + `</tbody>`;
@@ -614,7 +633,7 @@ function setView(v) {
 }
 const footnoteTrades = () => sampleMode
   ? "Showing generated sample trades. On GitHub this page reads the trades V2B uploads for this trader and checks for new ones 5 seconds after each 5-minute bar."
-  : "P&L is net: the commission your account charged (Fees) is already taken off. Trades recorded before 4 Nov 2026 have no fee data and show gross P&L.";
+  : "P&L is net: the commission your account charged is already taken off.";
 
 let currentDay = { date: "", instrument: "", trades: [] };   // what the Trades tab is showing, for Download
 // ---- Calendar --------------------------------------------------------------------
@@ -710,7 +729,7 @@ async function render(withLog = true) {
   currentDay = { date: selected, instrument: day.instrument || "", trades };
   if (day.instrument) $("instrument").textContent = `${day.instrument} · 5 minute`;
   $("updated").textContent = day.updated ? `Updated ${day.updated.slice(11, 16)} on ${fmtDay(day.updated.slice(0, 10))}` : "No updates for this date";
-  renderDays(); renderSummary(trades);
+  renderDays(); renderViewing(); renderSummary(trades);
   if (!days.length && !sampleMode) $("updated").textContent = "No trades uploaded yet"; renderChart(trades); renderSessions(trades); renderTrades(trades); renderCalendar();
   if (view === "trades") $("footnote").textContent = footnoteTrades();
   if (withLog && view === "logs") renderLog();
@@ -729,6 +748,7 @@ function select(date) {
 $("tabTrades").addEventListener("click", () => setView("trades"));
 $("tabLogs").addEventListener("click", () => setView("logs"));
 $("hideQuiet").addEventListener("change", () => { try { localStorage.setItem("v2b-hide-quiet", $("hideQuiet").checked ? "1" : ""); } catch {} renderLog(); });
+$("backToday").addEventListener("click", () => select(todayStr()));
 window.addEventListener("hashchange", () => { const h = location.hash.slice(1); if (DATE_RE.test(h) && h !== selected) select(h); });
 
 (async function start() {
@@ -805,18 +825,18 @@ async function downloadDay() {
 
   // Trades sheet (same columns and order as the table: newest first)
   const time = (s) => (s || "").slice(11, 16);
-  const header = ["#", "Entry", "Exit", "Session", "Mode", "Side", "Qty", "Entry price", "Exit price", "Points", "Result", "R", "Fees ($)", "P&L ($)", "Cumulative P&L ($)"];
+  const header = ["#", "Entry", "Exit", "Session", "Mode", "Side", "Qty", "Entry price", "Exit price", "Points", "Result", "R", "P&L ($)", "Cumulative P&L ($)"];
   const rows = trades.map((t, i) => [i + 1, time(t.entry_time), time(t.exit_time), t.session || "", t.trading_mode || "", t.direction || "", Number(t.contracts),
     Number(t.entry), Number(t.exit), t.pnl_points === null ? null : Number(t.pnl_points), t.result || "",
-    t.r === null ? null : Number(t.r), t.commission > 0 ? Number(t.commission) : null, Number(t.pnl), Number(t.cum_pnl ?? 0)]).reverse();
+    t.r === null ? null : Number(t.r), Number(t.pnl), Number(t.cum_pnl ?? 0)]).reverse();
   const ws2 = XLSX.utils.aoa_to_sheet([header, ...rows]);
   for (let r = 2; r <= rows.length + 1; r++) {
     ["H", "I"].forEach((c) => fmt(ws2, c + r, "0.00"));
     fmt(ws2, "J" + r, "+0.00;-0.00"); fmt(ws2, "L" + r, "+0.00;-0.00");
-    ["M", "N", "O"].forEach((c) => fmt(ws2, c + r, "$#,##0.00;-$#,##0.00"));
+    ["M", "N"].forEach((c) => fmt(ws2, c + r, "$#,##0.00;-$#,##0.00"));
   }
-  ws2["!cols"] = [4, 7, 7, 16, 10, 7, 5, 11, 11, 8, 7, 7, 8, 11, 17].map((w) => ({ wch: w }));
-  ws2["!autofilter"] = { ref: `A1:O${rows.length + 1}` };
+  ws2["!cols"] = [4, 7, 7, 16, 10, 7, 5, 11, 11, 8, 7, 7, 11, 17].map((w) => ({ wch: w }));
+  ws2["!autofilter"] = { ref: `A1:N${rows.length + 1}` };
 
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws1, "Summary");
@@ -839,7 +859,7 @@ const LOG_FOLLOW_UPS = [20, 45, 90];   // seconds after the bar, used only while
 const TRADES_EVERY_SECONDS = 120;
 let nextLog = 0, nextTrades = 0, logFollowUp = 0, followIdx = 0, waitingFor = "", busyLog = false, busyTrades = false;
 const hhmm = (d) => `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-const todayStr = () => new Date().toISOString().slice(0, 10);
+const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 function barStart(from) {
   const t = new Date(from);
   t.setMinutes(Math.floor(t.getMinutes() / 5) * 5, 0, 0);
