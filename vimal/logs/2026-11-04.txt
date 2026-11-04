@@ -242,3 +242,4 @@
 2026-11-04 12:15:00  SHORT 6 @ 28419.5 | stop 28443.5 | TP 1R 28395.5 | risk $288.00 (replaced previous)
 2026-11-04 12:15:00  Entry filled: SHORT 1 @ 28419.50 | stop 28443.50 | target 28395.50
 2026-11-04 12:20:00  In trade: SHORT 6 @ 28419.50 | stop 28443.50 | target 28395.50 | open P&L +$0.00
+2026-11-04 12:20:00  Trade closed: TP +$294.00 (Profit target @ 28395)
