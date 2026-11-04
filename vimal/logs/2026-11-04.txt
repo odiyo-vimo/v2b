@@ -166,3 +166,4 @@
 2026-11-04 08:15:00  LONG 7 @ 28344.75 | stop 28325.75 | TP 1R 28363.75 | risk $266.00 (replaced previous)
 2026-11-04 08:20:00  Newer signal replaces pending entry at 28344.75.
 2026-11-04 08:20:00  LONG 8 @ 28391 | stop 28374.25 | TP 1R 28407.75 | risk $268.00 (replaced previous)
+2026-11-04 08:20:00  Entry filled: LONG 1 @ 28389.00 | stop 28374.25 | target 28407.75
