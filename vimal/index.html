@@ -410,6 +410,8 @@ function renderViewing() {
   $("backToday").hidden = isToday;
 }
 
+// NinjaTrader's own day P&L for the day on screen (null for older days without it).
+let accountDayPnl = null;
 function renderSummary(trades) {
   const n = trades.length;
   const count = (r) => trades.filter((t) => t.result === r).length;
@@ -419,8 +421,13 @@ function renderSummary(trades) {
   const rs = trades.filter((t) => t.result === "TP" && t.r !== null && isFinite(t.r)).map((t) => Number(t.r));
   const avgR = rs.length ? rs.reduce((a, b) => a + b, 0) / rs.length : 0;
   const win = n ? (tp / n) * 100 : 0; const winX = tp + sl ? (tp / (tp + sl)) * 100 : 0;
+  const nt = accountDayPnl;
+  const shown = nt === null ? pnl : nt;
+  const sub = nt === null ? "&nbsp;"
+    : Math.abs(nt - pnl) < 0.005 ? "From NinjaTrader"
+    : `From NinjaTrader · trades listed ${money(pnl)}`;
   $("summary").innerHTML = `
-    <div class="stat"><span class="k">Day P&amp;L</span><span class="v big ${cls(pnl)}">${money(pnl)}</span></div>
+    <div class="stat"><span class="k">Day P&amp;L</span><span class="v big ${cls(shown)}">${money(shown)}</span><span class="note">${sub}</span></div>
     <div class="stat"><span class="k">Trades</span><span class="v">${n}</span>
       <span class="chips"><span class="chip TP">TP ${tp}</span><span class="chip BE">BE ${be}</span><span class="chip SL">SL ${sl}</span></span></div>
     <div class="stat"><span class="k">Win rate</span><span class="v">${n ? win.toFixed(0) + "%" : "–"}</span><span class="note">${tp + sl ? winX.toFixed(0) + "% excl. BE" : "&nbsp;"}</span></div>
@@ -727,6 +734,7 @@ async function render(withLog = true) {
   const day = await loadDay(selected);
   const trades = (day.trades || []).slice().sort((a, b) => (a.exit_time || "").localeCompare(b.exit_time || ""));
   currentDay = { date: selected, instrument: day.instrument || "", trades };
+  accountDayPnl = day.account_day_pnl === undefined || day.account_day_pnl === null ? null : Number(day.account_day_pnl);
   if (day.instrument) $("instrument").textContent = `${day.instrument} · 5 minute`;
   $("updated").textContent = day.updated ? `Updated ${day.updated.slice(11, 16)} on ${fmtDay(day.updated.slice(0, 10))}` : "No updates for this date";
   renderDays(); renderViewing(); renderSummary(trades);
@@ -810,7 +818,8 @@ async function downloadDay() {
     ["Win rate", trades.length ? tp / trades.length : null],
     ["Win rate excl. BE", tp + sl ? tp / (tp + sl) : null],
     ["Avg winner R", avgR],
-    ["Day P&L ($)", pnl],
+    ["Day P&L ($)", accountDayPnl === null ? pnl : accountDayPnl],
+    ...(accountDayPnl === null ? [] : [["P&L of trades listed ($)", pnl]]),
     [],
     ["By session", "Trades", "TP", "P&L ($)"],
   ];
@@ -820,7 +829,9 @@ async function downloadDay() {
   const ws1 = XLSX.utils.aoa_to_sheet(summary);
   const fmt = (ws, ref, z) => { if (ws[ref]) ws[ref].z = z; };
   fmt(ws1, "B10", "0%"); fmt(ws1, "B11", "0%"); fmt(ws1, "B12", "+0.00;-0.00"); fmt(ws1, "B13", "$#,##0.00;-$#,##0.00");
-  for (let r = 16; r < 16 + Object.keys(by).length; r++) fmt(ws1, "D" + r, "$#,##0.00;-$#,##0.00");
+  const off = accountDayPnl === null ? 0 : 1;   // extra "P&L of trades listed" row
+  if (off) fmt(ws1, "B14", "$#,##0.00;-$#,##0.00");
+  for (let r = 16 + off; r < 16 + off + Object.keys(by).length; r++) fmt(ws1, "D" + r, "$#,##0.00;-$#,##0.00");
   ws1["!cols"] = [{ wch: 20 }, { wch: 14 }, { wch: 8 }, { wch: 12 }];
 
   // Trades sheet (same columns and order as the table: newest first)
