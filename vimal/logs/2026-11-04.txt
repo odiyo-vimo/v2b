@@ -22,3 +22,5 @@
 2026-11-04 01:05:00  SHORT 2 @ 28119.75 | stop 28185.5 | TP 1R 28054 | risk $263.00
 2026-11-04 01:10:00  No signal: NQ 12-26 volume 4689 <= previous 6265
 2026-11-04 01:15:00  No signal: NQ 12-26 volume 3770 <= previous 4689
+2026-11-04 01:20:00  No signal: NQ 12-26 volume 3510 <= previous 3770
+2026-11-04 01:20:00  Pending entry not filled after 3 bars, cancelling.
