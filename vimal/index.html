@@ -511,11 +511,11 @@ function findLiveTrade(lines) {
   let cur = null;
   for (const { t, msg } of lines) {
     let m;
-    if ((m = msg.match(/^(LONG|SHORT) (\d+) @ ([\d.]+) \| stop ([\d.]+) \| TP \S+ ([\d.]+)/)))
+    if ((m = msg.match(/^(LONG|SHORT) (\d+) @ ([\d.]+) \| stop ([\d.]+)(?: \([\d.]+ pts\))? \| TP \S+ ([\d.]+)/)))
       cur = { state: "pending", side: m[1], qty: +m[2], price: +m[3], stop: +m[4], target: +m[5], since: t };
-    else if ((m = msg.match(/^Entry filled: (LONG|SHORT) (\d+) @ ([\d.]+)(?: \| stop ([\d.]+) \| target ([\d.]+))?/)))
+    else if ((m = msg.match(/^Entry filled: (LONG|SHORT) (\d+) @ ([\d.]+)(?: \| stop ([\d.]+)(?: \([\d.]+ pts\))? \| target ([\d.]+))?/)))
       cur = { ...(cur || {}), state: "live", side: m[1], qty: +m[2], price: +m[3], stop: m[4] ? +m[4] : cur && cur.stop, target: m[5] ? +m[5] : cur && cur.target, since: t };
-    else if ((m = msg.match(/^In trade: (LONG|SHORT) (\d+) @ ([\d.]+)(?: \| stop ([\d.]+) \| target ([\d.]+))?/)))
+    else if ((m = msg.match(/^In trade: (LONG|SHORT) (\d+) @ ([\d.]+)(?: \| stop ([\d.]+)(?: \([\d.]+ pts\))? \| target ([\d.]+))?/)))
       cur = { ...(cur || {}), state: "live", side: m[1], qty: +m[2], price: +m[3], stop: m[4] ? +m[4] : cur && cur.stop, target: m[5] ? +m[5] : cur && cur.target, since: (cur && cur.state === "live" && cur.since) || t };
     else if ((m = msg.match(/^Break-even: .* stop moved to ([\d.]+)/)) && cur)
       cur = { ...cur, state: "live", stop: +m[1] };
