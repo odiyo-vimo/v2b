@@ -33,3 +33,4 @@
 2026-11-04 01:45:00  No signal: NQ 12-26 volume 3158 <= previous 3734
 2026-11-04 01:45:00  Entry filled: SHORT 1 @ 27839.25 | stop 27868.00 | target 27810.50
 2026-11-04 01:50:00  In trade: SHORT 5 @ 27839.25 | stop 27868.00 | target 27810.50 | open P&L -$152.50
+2026-11-04 01:50:00  Trade closed: SL -$287.50 (Stop loss @ 27868)
