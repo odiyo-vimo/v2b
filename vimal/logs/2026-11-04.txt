@@ -260,3 +260,4 @@
 2026-11-04 13:05:00  Skipped: signal bar is a pin bar.
 2026-11-04 13:10:00  No signal: NQ 12-26 volume 3207 <= previous 4075
 2026-11-04 13:15:00  No signal: NQ 12-26 volume 2543 <= previous 3207
+2026-11-04 13:20:00  No signal: NQ 12-26 volume 2038 <= previous 2543
