@@ -2,3 +2,4 @@
 2026-11-04 18:05:00  SHORT 10 @ 28763 | stop 28777.75 (14.75 pts) | TP 1R 28748.25 (14.75 pts) | risk $295.00
 2026-11-04 18:05:00  Entry filled: SHORT 1 @ 28763.00 | stop 28777.75 (14.75 pts) | target 28748.25 (14.75 pts)
 2026-11-04 18:05:00  Trade closed: TP +$295.00 | +14.75 pts (Profit target @ 28748.25)
+2026-11-04 18:10:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
