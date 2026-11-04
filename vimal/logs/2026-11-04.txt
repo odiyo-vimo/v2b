@@ -199,3 +199,4 @@
 2026-11-04 09:50:00  Trade closed: TP +$292.50 (Profit target @ 28462.75)
 2026-11-04 09:55:00  LONG 11 @ 28456.5 | stop 28443 | TP 1R 28470 | risk $297.00
 2026-11-04 10:00:00  No signal: NQ 12-26 volume 1211 <= previous 1535
+2026-11-04 10:05:00  No signal: NQ 12-26 volume 707 <= previous 1211
