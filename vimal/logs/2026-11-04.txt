@@ -31,3 +31,4 @@
 2026-11-04 19:45:00  Trade closed: SL -$282.00 | -11.75 pts (Stop loss @ 28614)
 2026-11-04 19:50:00  Liquidity: swept Swing L 28604.75 and rejected it (pin bar) -> reversal LONG.
 2026-11-04 19:50:00  LONG 8 @ 28610.5 | stop 28593.25 (17.25 pts) | TP 1R 28627.75 (17.25 pts) | risk $276.00 | reversal: swept Swing L 28604.75 and rejected it (pin bar)
+2026-11-04 19:50:00  Entry filled: LONG 1 @ 28610.50 | stop 28593.25 (17.25 pts) | target 28627.75 (17.25 pts)
