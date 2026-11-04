@@ -66,3 +66,4 @@
 2026-11-04 21:45:00  No signal: NQ 12-26 volume 362 <= previous 614
 2026-11-04 21:50:00  No signal: range 10.25 below minimum.
 2026-11-04 21:55:00  No signal: range 15.25 below minimum.
+2026-11-04 22:00:00  Outside trading hours (08:00-20:00): no new trades.
