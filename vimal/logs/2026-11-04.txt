@@ -40,3 +40,4 @@
 2026-11-04 20:15:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-04 20:20:00  LONG 8 @ 28601.25 | stop 28584.25 (17 pts) | TP 1R 28618.25 (17 pts) | risk $272.00
 2026-11-04 20:20:00  Entry filled: LONG 4 @ 28601.25 | stop 28584.25 (17 pts) | target 28618.25 (17 pts)
+2026-11-04 20:25:00  In trade: LONG 8 @ 28601.25 | stop 28584.25 (17 pts) | target 28618.25 (17 pts) | open P&L +$36.00
