@@ -13,3 +13,4 @@
 2026-11-04 18:50:00  Liquidity: swept Swing L 28647.75 and closed beyond it -> breakout SHORT allowed.
 2026-11-04 18:50:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-04 18:55:00  No signal: NQ 12-26 volume 2882 <= previous 3955
+2026-11-04 19:00:00  No signal: range 27.25 below minimum.
