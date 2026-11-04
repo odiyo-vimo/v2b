@@ -42,3 +42,4 @@
 2026-11-04 20:20:00  Entry filled: LONG 4 @ 28601.25 | stop 28584.25 (17 pts) | target 28618.25 (17 pts)
 2026-11-04 20:25:00  In trade: LONG 8 @ 28601.25 | stop 28584.25 (17 pts) | target 28618.25 (17 pts) | open P&L +$36.00
 2026-11-04 20:25:00  Trade closed: TP +$272.00 | +17 pts (Profit target @ 28618.25)
+2026-11-04 20:30:00  No signal: NQ 12-26 volume 3342 <= previous 3729
