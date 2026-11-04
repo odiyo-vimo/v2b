@@ -84,3 +84,4 @@
 2026-11-04 04:15:00  Trade closed: SL -$291.00 (Stop loss @ 27699.5)
 2026-11-04 04:20:00  No signal: NQ 12-26 volume 954 <= previous 1656
 2026-11-04 04:25:00  SHORT 7 @ 27701.75 | stop 27722 | TP 1R 27681.5 | risk $283.50
+2026-11-04 04:30:00  No signal: NQ 12-26 volume 970 <= previous 1022
