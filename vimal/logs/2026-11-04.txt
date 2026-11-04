@@ -327,3 +327,5 @@
 2026-11-04 16:45:00  Newer signal replaces pending entry at 28539.25.
 2026-11-04 16:45:00  LONG 4 @ 28608.5 | stop 28571 | TP 1R 28646 | risk $300.00 (replaced previous)
 2026-11-04 16:50:00  No signal: NQ 12-26 volume 7030 <= previous 11150
+2026-11-04 16:55:00  Newer signal replaces pending entry at 28608.5.
+2026-11-04 16:55:00  LONG 4 @ 28712.25 | stop 28682 | TP 1R 28742.5 | risk $242.00 (replaced previous)
