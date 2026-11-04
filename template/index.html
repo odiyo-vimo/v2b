@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>V2B Trade Journal</title>
+<title>Traders Panel</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -156,7 +156,7 @@ td.cum { color: var(--muted); }
   <header>
     <div class="titleblock">
       <a class="back" href="../">← All</a>
-      <div class="eyebrow">V2B Trade Journal</div>
+      <div class="eyebrow">Traders Panel</div>
       <h1 id="trader">Trader</h1>
       <div class="sub">
         <span id="instrument">MNQ · 5 minute</span>
@@ -455,7 +455,22 @@ function liveRow() {
     <td class="r num">${l.price ? Number(l.price).toFixed(2) : ""}</td><td class="r num note">${l.stop ? "SL " + Number(l.stop).toFixed(2) : ""}</td>
     <td class="r num note">${l.target ? "TP " + Number(l.target).toFixed(2) : ""}</td><td>${chip}</td><td></td><td></td><td></td><td></td></tr>`;
 }
+// Widen the page (centred, up to the window width) so the trades table fits without a
+// scrollbar. Below that width the table scrolls as before.
+const BASE_WIDTH = 1080;
+function fitPageToTable() {
+  const table = $("trades"), box = table.parentElement, outer = document.querySelector("body > .wrap");
+  if (!outer || !table.offsetWidth) return;
+  for (let i = 0; i < 4 && box.scrollWidth > box.clientWidth; i++) {
+    const extra = outer.offsetWidth - box.clientWidth;     // panel padding and borders
+    const want = Math.max(BASE_WIDTH, Math.ceil(box.scrollWidth + extra + 2));
+    if (want <= outer.offsetWidth && outer.offsetWidth >= window.innerWidth - 40) break;   // window too narrow: scroll
+    document.querySelectorAll(".wrap").forEach((w) => { w.style.maxWidth = want + "px"; });
+  }
+}
+window.addEventListener("resize", () => requestAnimationFrame(fitPageToTable));
 function renderTrades(trades) {
+  requestAnimationFrame(fitPageToTable);
   $("tradesTitle").textContent = `Trades · ${fmtDay(selected)}`;
   if (!trades.length && !liveRow()) { $("trades").innerHTML = `<tr><td class="empty">No trades logged on this date.</td></tr>`; return; }
   const time = (s) => (s || "").slice(11, 16);
@@ -626,7 +641,7 @@ window.addEventListener("hashchange", () => { const h = location.hash.slice(1); 
   await loadIndex();
   const name = sampleMode ? "vimal" : traderFromPath();
   $("trader").textContent = name || "Trader";
-  if (name) document.title = `${name} · V2B Trade Journal`;
+  if (name) document.title = `${name} · Traders Panel`;
   try { $("hideQuiet").checked = localStorage.getItem("v2b-hide-quiet") === "1"; } catch {}
   let savedView = "trades"; try { savedView = localStorage.getItem("v2b-view") || "trades"; } catch {}
   const h = location.hash.slice(1);
@@ -669,7 +684,7 @@ async function downloadDay() {
 
   // Summary sheet
   const summary = [
-    ["V2B Trade Journal"],
+    ["Traders Panel"],
     ["Trader", name],
     ["Date", date],
     ["Instrument", instrument || ""],
@@ -712,8 +727,8 @@ async function downloadDay() {
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws1, "Summary");
   XLSX.utils.book_append_sheet(wb, ws2, "Trades");
-  XLSX.writeFile(wb, `V2B_${name}_${date}.xlsx`);
-  note.textContent = ON_GITHUB ? `Downloaded V2B_${name}_${date}.xlsx` : "Downloads work on the GitHub page; this preview can't save files.";
+  XLSX.writeFile(wb, `TradersPanel_${name}_${date}.xlsx`);
+  note.textContent = ON_GITHUB ? `Downloaded TradersPanel_${name}_${date}.xlsx` : "Downloads work on the GitHub page; this preview can't save files.";
 }
 $("download").addEventListener("click", downloadDay);
 
