@@ -205,7 +205,6 @@ td.cum { color: var(--muted); }
       <button id="next" type="button" aria-label="Next trading day">Next ▶</button>
       <button id="today" type="button">Latest</button>
     </div>
-    <div class="days" id="days" role="group" aria-label="Recent trading days"></div>
   </div>
 
   <div class="views" role="tablist" aria-label="View">
@@ -399,14 +398,7 @@ async function loadDay(date) {
 
 // ---- Rendering ----------------------------------------------------------------
 function renderDays() {
-  const recent = days.slice(-12).reverse();
-  $("days").innerHTML = recent.map((d) =>
-    `<button type="button" class="day" data-date="${d.date}" aria-pressed="${d.date === selected}">
-       <span class="d">${fmtDay(d.date)}</span>
-       <span class="p ${cls(d.pnl)}">${money(d.pnl)}</span>
-       <span class="d">${d.trades} trade${d.trades === 1 ? "" : "s"}</span>
-     </button>`).join("");
-  $("days").querySelectorAll(".day").forEach((b) => b.addEventListener("click", () => select(b.dataset.date)));
+  // The recent-days strip was replaced by the calendar; only the date controls remain.
   $("prev").disabled = !days.some((d) => d.date < selected);
   $("next").disabled = !days.some((d) => d.date > selected);
   if (days.length) $("date").min = days[0].date;
