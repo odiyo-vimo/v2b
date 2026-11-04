@@ -13,3 +13,4 @@
 2026-11-04 00:40:00  No signal: NQ 12-26 volume 3119 <= previous 3451
 2026-11-04 00:45:00  No signal: NQ 12-26 volume 1859 <= previous 3119
 2026-11-04 00:45:00  Entry filled: SHORT 1 @ 28123.75 | stop 28160.25 | target 28087.25
+2026-11-04 00:50:00  In trade: SHORT 4 @ 28123.75 | stop 28160.25 | target 28087.25 | open P&L -$170.00
