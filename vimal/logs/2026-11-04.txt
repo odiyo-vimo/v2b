@@ -4,3 +4,4 @@
 2026-11-04 18:05:00  Trade closed: TP +$295.00 | +14.75 pts (Profit target @ 28748.25)
 2026-11-04 18:10:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-04 18:15:00  Skipped: signal bar is a pin bar.
+2026-11-04 18:20:00  No signal: NQ 12-26 volume 3799 <= previous 5134
