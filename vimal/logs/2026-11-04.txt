@@ -7,3 +7,4 @@
 2026-11-04 00:20:00  SHORT 4 @ 28297.75 | stop 28329.5 | TP 1R 28266 | risk $254.00
 2026-11-04 00:25:00  Newer signal replaces pending entry at 28297.75.
 2026-11-04 00:25:00  SHORT 5 @ 28225.25 | stop 28254.25 | TP 1R 28196.25 | risk $290.00 (replaced previous)
+2026-11-04 00:30:00  No signal: NQ 12-26 volume 2959 <= previous 2985
