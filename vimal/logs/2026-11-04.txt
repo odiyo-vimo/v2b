@@ -25,3 +25,4 @@
 2026-11-04 01:20:00  No signal: NQ 12-26 volume 3510 <= previous 3770
 2026-11-04 01:20:00  Pending entry not filled after 3 bars, cancelling.
 2026-11-04 01:25:00  LONG 4 @ 27880.5 | stop 27843.75 | TP 1R 27917.25 | risk $294.00
+2026-11-04 01:25:00  Entry filled: LONG 4 @ 27880.50 | stop 27843.75 | target 27917.25
