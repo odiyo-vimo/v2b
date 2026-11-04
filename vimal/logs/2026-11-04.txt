@@ -240,3 +240,4 @@
 2026-11-04 12:10:00  SHORT 5 @ 28484.25 | stop 28512 | TP 1R 28456.5 | risk $277.50 (replaced previous)
 2026-11-04 12:15:00  Newer signal replaces pending entry at 28484.25.
 2026-11-04 12:15:00  SHORT 6 @ 28419.5 | stop 28443.5 | TP 1R 28395.5 | risk $288.00 (replaced previous)
+2026-11-04 12:15:00  Entry filled: SHORT 1 @ 28419.50 | stop 28443.50 | target 28395.50
