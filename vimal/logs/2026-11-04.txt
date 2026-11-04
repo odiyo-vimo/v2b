@@ -134,3 +134,4 @@
 2026-11-04 06:45:00  SHORT 14 @ 28204.75 | stop 28215 | TP 1R 28194.5 | risk $287.00
 2026-11-04 06:50:00  No signal: NQ 12-26 volume 439 <= previous 799
 2026-11-04 06:50:00  Entry filled: SHORT 1 @ 28204.75 | stop 28215.00 | target 28194.50
+2026-11-04 06:50:00  Trade closed: SL -$286.50 (Stop loss @ 28215)
