@@ -232,3 +232,4 @@
 2026-11-05 18:05:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-05 18:10:00  No signal: NQ 12-26 volume 6692 <= previous 12490
 2026-11-05 18:15:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
+2026-11-05 18:20:00  No signal: NQ 12-26 volume 6501 <= previous 8141
