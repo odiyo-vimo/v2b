@@ -237,3 +237,4 @@
 2026-11-05 18:30:00  LONG 4 @ 26899.5 | stop 26868 (31.5 pts) | TP 1R 26931 (31.5 pts) | risk $252.00
 2026-11-05 18:30:00  Entry filled: LONG 1 @ 26899.50 | stop 26868.00 (31.5 pts) | target 26931.00 (31.5 pts)
 2026-11-05 18:30:00  Trade closed: TP +$252.00 | +31.5 pts (Profit target @ 26931)
+2026-11-05 18:35:00  No signal: NQ 12-26 volume 4451 <= previous 5721
