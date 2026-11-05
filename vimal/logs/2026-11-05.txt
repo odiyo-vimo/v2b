@@ -96,3 +96,4 @@
 2026-11-05 07:55:00  Outside trading hours (08:00-20:00): no new trades.
 2026-11-05 08:00:00  Outside trading hours (08:00-20:00): no new trades.
 2026-11-05 08:05:00  SHORT 9 @ 28298.5 | stop 28314.5 (16 pts) | TP 1R 28282.5 (16 pts) | risk $288.00
+2026-11-05 08:05:00  Entry filled: SHORT 1 @ 28298.50 | stop 28314.50 (16 pts) | target 28282.50 (16 pts)
