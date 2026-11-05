@@ -245,3 +245,4 @@
 2026-11-05 18:50:00  Skipped: bullish bar closed 46.5% of the way up, needs 50% or more.
 2026-11-05 18:55:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-05 19:00:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
+2026-11-05 19:05:00  SHORT 4 @ 26932.75 | stop 26963.25 (30.5 pts) | TP 1R 26902.25 (30.5 pts) | risk $244.00
