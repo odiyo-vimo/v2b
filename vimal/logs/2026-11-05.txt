@@ -157,3 +157,4 @@
 2026-11-05 11:55:00  Liquidity: swept Swing H 28450.00 and closed beyond it -> breakout LONG allowed.
 2026-11-05 11:55:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-05 12:00:00  No signal: NQ 12-26 volume 809 <= previous 946
+2026-11-05 12:05:00  Skipped: signal bar is a pin bar.
