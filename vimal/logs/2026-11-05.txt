@@ -187,3 +187,4 @@
 2026-11-05 13:40:00  Trade closed: SL -$280.00 | -17.5 pts (Stop loss @ 28356.75)
 2026-11-05 13:45:00  No signal: NQ 12-26 volume 1679 <= previous 1957
 2026-11-05 13:50:00  No signal: NQ 12-26 volume 1603 <= previous 1679
+2026-11-05 13:55:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
