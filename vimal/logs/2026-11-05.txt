@@ -196,3 +196,5 @@
 2026-11-05 14:15:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-05 14:20:00  No signal: NQ 12-26 volume 2256 <= previous 3970
 2026-11-05 14:25:00  No signal: NQ 12-26 volume 2103 <= previous 2256
+2026-11-05 14:30:00  First 15 minutes of the US open: no new trades.
+2026-11-05 14:35:00  First 15 minutes of the US open: no new trades.
