@@ -279,3 +279,4 @@
 2026-11-05 21:15:00  No signal: NQ 12-26 volume 3609 <= previous 6322
 2026-11-05 21:20:00  No signal: NQ 12-26 volume 3169 <= previous 3609
 2026-11-05 21:25:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
+2026-11-05 21:30:00  LONG 3 @ 26609 | stop 26569.75 (39.25 pts) | TP 1R 26648.25 (39.25 pts) | risk $235.50
