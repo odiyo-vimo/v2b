@@ -181,3 +181,4 @@
 2026-11-05 13:25:00  In trade: SHORT 7 @ 28341.25 | stop 28361.75 (20.5 pts) | target 28320.75 (20.5 pts) | open P&L -$45.50
 2026-11-05 13:30:00  In trade: SHORT 7 @ 28341.25 | stop 28361.75 (20.5 pts) | target 28320.75 (20.5 pts) | open P&L -$112.00
 2026-11-05 13:30:00  Trade closed: TP +$289.00 | +20.64 pts (Profit target @ 28320.75)
+2026-11-05 13:35:00  SHORT 8 @ 28339.25 | stop 28356.75 (17.5 pts) | TP 1R 28321.75 (17.5 pts) | risk $280.00
