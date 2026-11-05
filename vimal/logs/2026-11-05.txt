@@ -290,3 +290,5 @@
 2026-11-05 22:00:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-05 23:05:00  Skipped: bullish bar closed 48% of the way up, needs 50% or more.
 2026-11-05 23:10:00  No signal: NQ 12-26 volume 1367 <= previous 2778
+2026-11-05 23:15:00  Liquidity: swept PDL 26571.75 and closed beyond it -> breakout SHORT allowed.
+2026-11-05 23:15:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
