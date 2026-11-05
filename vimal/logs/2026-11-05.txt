@@ -99,3 +99,4 @@
 2026-11-05 08:05:00  Entry filled: SHORT 1 @ 28298.50 | stop 28314.50 (16 pts) | target 28282.50 (16 pts)
 2026-11-05 08:05:00  Trade closed: SL -$288.00 | -16 pts (Stop loss @ 28314.5)
 2026-11-05 08:10:00  LONG 6 @ 28290.75 | stop 28269 (21.75 pts) | TP 1R 28312.5 (21.75 pts) | risk $261.00
+2026-11-05 08:15:00  No signal: NQ 12-26 volume 1470 <= previous 1791
