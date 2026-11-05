@@ -293,3 +293,5 @@
 2026-11-05 23:15:00  Liquidity: swept PDL 26571.75 and closed beyond it -> breakout SHORT allowed.
 2026-11-05 23:15:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-05 23:20:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
+2026-11-05 23:25:00  No signal: NQ 12-26 volume 2702 <= previous 4347
+2026-11-05 23:30:00  No signal: NQ 12-26 volume 2237 <= previous 2702
