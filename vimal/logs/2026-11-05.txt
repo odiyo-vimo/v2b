@@ -249,3 +249,4 @@
 2026-11-05 19:05:00  Entry filled: SHORT 1 @ 26932.75 | stop 26963.25 (30.5 pts) | target 26902.25 (30.5 pts)
 2026-11-05 19:10:00  In trade: SHORT 4 @ 26932.75 | stop 26963.25 (30.5 pts) | target 26902.25 (30.5 pts) | open P&L +$88.00
 2026-11-05 19:10:00  Trade closed: TP +$244.00 | +30.5 pts (Profit target @ 26902.25)
+2026-11-05 19:15:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
