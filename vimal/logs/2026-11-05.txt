@@ -173,3 +173,4 @@
 2026-11-05 13:00:00  LONG 11 @ 28305.75 | stop 28293 (12.75 pts) | TP 1R 28318.5 (12.75 pts) | risk $280.50
 2026-11-05 13:00:00  Entry filled: LONG 10 @ 28305.50 | stop 28293.00 (12.5 pts) | target 28318.50 (13 pts)
 2026-11-05 13:00:00  Trade closed: SL -$279.50 | -12.7 pts (Stop loss @ 28293)
+2026-11-05 13:05:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
