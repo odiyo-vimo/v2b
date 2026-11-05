@@ -184,3 +184,4 @@
 2026-11-05 13:35:00  SHORT 8 @ 28339.25 | stop 28356.75 (17.5 pts) | TP 1R 28321.75 (17.5 pts) | risk $280.00
 2026-11-05 13:35:00  Entry filled: SHORT 1 @ 28339.25 | stop 28356.75 (17.5 pts) | target 28321.75 (17.5 pts)
 2026-11-05 13:40:00  In trade: SHORT 8 @ 28339.25 | stop 28356.75 (17.5 pts) | target 28321.75 (17.5 pts) | open P&L -$144.00
+2026-11-05 13:40:00  Trade closed: SL -$280.00 | -17.5 pts (Stop loss @ 28356.75)
