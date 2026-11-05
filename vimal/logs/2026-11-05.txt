@@ -170,3 +170,4 @@
 2026-11-05 12:45:00  No signal: NQ 12-26 volume 1039 <= previous 1074
 2026-11-05 12:50:00  No signal: NQ 12-26 volume 794 <= previous 1039
 2026-11-05 12:55:00  Skipped: signal bar is a pin bar.
+2026-11-05 13:00:00  LONG 11 @ 28305.75 | stop 28293 (12.75 pts) | TP 1R 28318.5 (12.75 pts) | risk $280.50
