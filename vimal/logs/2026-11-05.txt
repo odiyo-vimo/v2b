@@ -139,3 +139,4 @@
 2026-11-05 10:35:00  No signal: NQ 12-26 volume 661 <= previous 761
 2026-11-05 10:40:00  No signal: NQ 12-26 volume 505 <= previous 661
 2026-11-05 10:45:00  LONG 11 @ 28420.5 | stop 28407 (13.5 pts) | TP 1R 28434 (13.5 pts) | risk $297.00
+2026-11-05 10:45:00  Entry filled: LONG 1 @ 28420.50 | stop 28407.00 (13.5 pts) | target 28434.00 (13.5 pts)
