@@ -285,3 +285,4 @@
 2026-11-05 21:45:00  Newer opposite signal replaces pending entry.
 2026-11-05 21:45:00  Cancelling pending entry for newer opposite signal.
 2026-11-05 21:45:00  SHORT 7 @ 26673.25 | stop 26692.25 (19 pts) | TP 1R 26654.25 (19 pts) | risk $266.00
+2026-11-05 21:50:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
