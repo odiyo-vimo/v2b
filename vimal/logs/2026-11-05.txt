@@ -297,3 +297,4 @@
 2026-11-05 23:30:00  No signal: NQ 12-26 volume 2237 <= previous 2702
 2026-11-05 23:35:00  SHORT 4 @ 26588.5 | stop 26625 (36.5 pts) | TP 1R 26552 (36.5 pts) | risk $292.00
 2026-11-05 23:40:00  No signal: NQ 12-26 volume 1393 <= previous 2481
+2026-11-05 23:45:00  No signal: NQ 12-26 volume 1267 <= previous 1393
