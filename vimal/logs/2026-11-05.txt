@@ -104,3 +104,4 @@
 2026-11-05 08:20:00  Newer signal replaces pending entry at 28290.75.
 2026-11-05 08:20:00  LONG 8 @ 28338.25 | stop 28319.5 (18.75 pts) | TP 1R 28357 (18.75 pts) | risk $300.00 | breakout: swept Swing H 28354.75 and closed beyond it (replaced previous)
 2026-11-05 08:25:00  No signal: NQ 12-26 volume 1087 <= previous 1652
+2026-11-05 08:30:00  No signal: NQ 12-26 volume 676 <= previous 1087
