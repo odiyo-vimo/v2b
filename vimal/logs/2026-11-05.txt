@@ -268,3 +268,4 @@
 2026-11-05 20:20:00  No signal: NQ 12-26 volume 5148 <= previous 6959
 2026-11-05 20:25:00  No signal: NQ 12-26 volume 4877 <= previous 5148
 2026-11-05 20:30:00  No signal: NQ 12-26 volume 4680 <= previous 4877
+2026-11-05 20:35:00  Skipped: swept Swing L 26816.25 but closed back above it at 26911.00 (no breakout, no pin bar).
