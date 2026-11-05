@@ -287,3 +287,4 @@
 2026-11-05 21:45:00  SHORT 7 @ 26673.25 | stop 26692.25 (19 pts) | TP 1R 26654.25 (19 pts) | risk $266.00
 2026-11-05 21:50:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
 2026-11-05 21:55:00  No signal: NQ 12-26 volume 1337 <= previous 1839
+2026-11-05 22:00:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
