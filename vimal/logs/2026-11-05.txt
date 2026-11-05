@@ -108,3 +108,4 @@
 2026-11-05 08:35:00  Skipped: signal bar is a pin bar.
 2026-11-05 08:35:00  Pending entry not filled after 3 bars, cancelling.
 2026-11-05 08:40:00  No signal: NQ 12-26 volume 781 <= previous 897
+2026-11-05 08:45:00  No signal: NQ 12-26 volume 732 <= previous 781
