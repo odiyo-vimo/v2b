@@ -260,3 +260,4 @@
 2026-11-05 19:50:00  No signal: NQ 12-26 volume 7598 <= previous 8332
 2026-11-05 19:55:00  No signal: NQ 12-26 volume 6529 <= previous 7598
 2026-11-05 20:00:00  No signal: NQ 12-26 volume 5491 <= previous 6529
+2026-11-05 20:05:00  No signal: NQ 12-26 volume 5128 <= previous 5491
