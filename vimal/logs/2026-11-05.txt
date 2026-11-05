@@ -215,3 +215,4 @@
 2026-11-05 15:50:00  No signal: NQ 12-26 volume 19877 <= previous 20177
 2026-11-05 16:55:00  Skipped: bullish bar closed 40.6% of the way up, needs 50% or more.
 2026-11-05 17:00:00  No signal: NQ 12-26 volume 7132 <= previous 7717
+2026-11-05 17:05:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
