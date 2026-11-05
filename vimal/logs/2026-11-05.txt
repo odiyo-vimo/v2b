@@ -226,3 +226,4 @@
 2026-11-05 17:45:00  Skipped: signal bar is a pin bar.
 2026-11-05 17:50:00  LONG 5 @ 26952.75 | stop 26923.25 (29.5 pts) | TP 1R 26982.25 (29.5 pts) | risk $295.00
 2026-11-05 17:50:00  Entry filled: LONG 1 @ 26952.75 | stop 26923.25 (29.5 pts) | target 26982.25 (29.5 pts)
+2026-11-05 17:55:00  In trade: LONG 5 @ 26952.75 | stop 26923.25 (29.5 pts) | target 26982.25 (29.5 pts) | open P&L +$217.50
