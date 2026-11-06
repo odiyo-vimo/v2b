@@ -286,3 +286,4 @@
 2026-11-06 20:05:00  Trade closed: TP +$291.00 | +24.25 pts (Profit target @ 27190)
 2026-11-06 20:10:00  Liquidity: swept Swing H 27221.50 and closed beyond it -> breakout LONG allowed.
 2026-11-06 20:10:00  LONG 5 @ 27191.5 | stop 27163 (28.5 pts) | TP 1R 27220 (28.5 pts) | risk $285.00 | breakout: swept Swing H 27221.50 and closed beyond it
+2026-11-06 20:15:00  Price came within 10% of the entry (27194.25) without filling.
