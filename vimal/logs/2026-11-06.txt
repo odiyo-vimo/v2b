@@ -269,3 +269,4 @@
 2026-11-06 19:10:00  No signal: NQ 12-26 volume 2495 <= previous 3741
 2026-11-06 19:15:00  No signal: bullish bar but 'Allow longs' is OFF in settings.
 2026-11-06 19:20:00  SHORT 6 @ 27196.25 | stop 27220.75 (24.5 pts) | TP 1R 27171.75 (24.5 pts) | risk $294.00
+2026-11-06 19:25:00  No signal: bullish bar but 'Allow longs' is OFF in settings.
