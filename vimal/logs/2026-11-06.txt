@@ -67,3 +67,4 @@
 2026-11-06 04:20:00  No signal: NQ 12-26 volume 717 <= previous 841
 2026-11-06 04:25:00  Skipped: bullish bar closed 49.2% of the way up, needs 50% or more.
 2026-11-06 04:30:00  No signal: NQ 12-26 volume 546 <= previous 841
+2026-11-06 04:35:00  Skipped: swept Swing H 27020.75 but closed back below it at 27015.25 (no breakout, no pin bar).
