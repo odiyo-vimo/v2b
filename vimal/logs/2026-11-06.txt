@@ -66,3 +66,4 @@
 2026-11-06 04:15:00  No signal: NQ 12-26 volume 841 <= previous 976
 2026-11-06 04:20:00  No signal: NQ 12-26 volume 717 <= previous 841
 2026-11-06 04:25:00  Skipped: bullish bar closed 49.2% of the way up, needs 50% or more.
+2026-11-06 04:30:00  No signal: NQ 12-26 volume 546 <= previous 841
