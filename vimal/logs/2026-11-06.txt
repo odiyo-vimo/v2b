@@ -60,3 +60,4 @@
 2026-11-06 03:55:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-06 04:00:00  No signal: NQ 12-26 volume 812 <= previous 996
 2026-11-06 04:05:00  SHORT 6 @ 26975.75 | stop 27000.75 (25 pts) | TP 1R 26950.75 (25 pts) | risk $300.00
+2026-11-06 04:05:00  Entry filled: SHORT 1 @ 26975.75 | stop 27000.75 (25 pts) | target 26950.75 (25 pts)
