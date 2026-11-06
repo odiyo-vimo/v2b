@@ -96,3 +96,4 @@
 2026-11-06 06:15:00  Newer signal replaces pending entry at 26964.5.
 2026-11-06 06:15:00  SHORT 10 @ 26935.5 | stop 26949.25 (13.75 pts) | TP 1R 26921.75 (13.75 pts) | risk $275.00 (replaced previous)
 2026-11-06 06:15:00  Entry filled: SHORT 1 @ 26935.50 | stop 26949.25 (13.75 pts) | target 26921.75 (13.75 pts)
+2026-11-06 06:15:00  Trade closed: SL -$275.00 | -13.75 pts (Stop loss @ 26949.25)
