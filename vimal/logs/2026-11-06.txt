@@ -271,3 +271,4 @@
 2026-11-06 19:20:00  SHORT 6 @ 27196.25 | stop 27220.75 (24.5 pts) | TP 1R 27171.75 (24.5 pts) | risk $294.00
 2026-11-06 19:25:00  No signal: bullish bar but 'Allow longs' is OFF in settings.
 2026-11-06 19:25:00  Entry filled: SHORT 1 @ 27196.25 | stop 27220.75 (24.5 pts) | target 27171.75 (24.5 pts)
+2026-11-06 19:30:00  In trade: SHORT 6 @ 27196.25 | stop 27220.75 (24.5 pts) | target 27171.75 (24.5 pts) | open P&L +$216.00
