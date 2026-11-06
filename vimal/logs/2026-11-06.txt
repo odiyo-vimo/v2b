@@ -303,3 +303,4 @@
 2026-11-06 20:50:00  SHORT 9 @ 27151.5 | stop 27168 (16.5 pts) | TP 1R 27135 (16.5 pts) | risk $297.00 (replaced previous)
 2026-11-06 20:55:00  Newer signal replaces pending entry at 27151.5.
 2026-11-06 20:55:00  SHORT 6 @ 27114 | stop 27137.75 (23.75 pts) | TP 1R 27090.25 (23.75 pts) | risk $285.00 (replaced previous)
+2026-11-06 20:55:00  Price came within 10% of the entry (27111.75) without filling.
