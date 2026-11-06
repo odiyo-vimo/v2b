@@ -231,3 +231,4 @@
 2026-11-06 16:15:00  No signal: NQ 12-26 volume 6347 <= previous 7380
 2026-11-06 16:20:00  No signal: NQ 12-26 volume 5870 <= previous 6347
 2026-11-06 16:25:00  LONG 2 @ 27156.5 | stop 27102 (54.5 pts) | TP 1R 27211 (54.5 pts) | risk $218.00
+2026-11-06 16:30:00  No signal: NQ 12-26 volume 6393 <= previous 8223
