@@ -204,3 +204,4 @@
 2026-11-06 13:10:00  No signal: NQ 12-26 volume 1047 <= previous 1464
 2026-11-06 13:15:00  Liquidity: swept Swing L 27049.75 and rejected it (pin bar) -> reversal LONG.
 2026-11-06 13:15:00  LONG 6 @ 27065.5 | stop 27040.75 (24.75 pts) | TP 1R 27090.25 (24.75 pts) | risk $297.00 | reversal: swept Swing L 27049.75 and rejected it (pin bar)
+2026-11-06 13:20:00  No signal: NQ 12-26 volume 1610 <= previous 2945
