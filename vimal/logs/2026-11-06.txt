@@ -235,3 +235,4 @@
 2026-11-06 16:35:00  Newer signal replaces pending entry at 27156.5.
 2026-11-06 16:35:00  LONG 6 @ 27270.75 | stop 27248.75 (22 pts) | TP 1R 27292.75 (22 pts) | risk $264.00 (replaced previous)
 2026-11-06 16:35:00  Entry filled: LONG 1 @ 27270.75 | stop 27248.75 (22 pts) | target 27292.75 (22 pts)
+2026-11-06 16:35:00  Trade closed: SL -$267.00 | -22.25 pts (Stop loss @ 27248.5)
