@@ -177,3 +177,5 @@
 2026-11-06 11:30:00  No signal: range 21.75 below minimum.
 2026-11-06 11:35:00  Liquidity: swept Swing H 27154.75 and closed beyond it -> breakout LONG allowed.
 2026-11-06 11:35:00  Skipped: signal bar is a pin bar.
+2026-11-06 11:40:00  Skipped: signal bar is a pin bar.
+2026-11-06 11:40:00  Pending entry not filled after 3 bars, cancelling.
