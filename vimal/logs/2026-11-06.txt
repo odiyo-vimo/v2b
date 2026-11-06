@@ -358,3 +358,4 @@
 2026-11-06 20:55:00  Price nearly filled, then reached the target 27090.25 without an entry: cancelling pending entry.
 2026-11-06 20:55:00  Price nearly filled, then reached the target 27090.25 without an entry: cancelling pending entry.
 2026-11-06 20:55:00  Price nearly filled, then reached the target 27090.25 without an entry: cancelling pending entry.
+2026-11-06 20:55:00  Price nearly filled, then reached the target 27090.25 without an entry: cancelling pending entry.
