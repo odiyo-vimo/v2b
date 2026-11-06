@@ -250,3 +250,5 @@
 2026-11-06 17:35:00  SHORT 5 @ 27210.5 | stop 27236.5 (26 pts) | TP 1R 27184.5 (26 pts) | risk $260.00
 2026-11-06 17:40:00  Skipped: swept Swing L 27035.75 but closed back above it at 27088.25 (no breakout, no pin bar).
 2026-11-06 17:45:00  No signal: NQ 12-26 volume 6617 <= previous 12809
+2026-11-06 17:50:00  No signal: NQ 12-26 volume 5936 <= previous 6617
+2026-11-06 17:50:00  Pending entry not filled after 3 bars, cancelling.
