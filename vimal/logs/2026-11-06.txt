@@ -194,3 +194,4 @@
 2026-11-06 12:35:00  No signal: NQ 12-26 volume 1074 <= previous 1462
 2026-11-06 12:40:00  Newer signal replaces pending entry at 27116.5.
 2026-11-06 12:40:00  LONG 7 @ 27140 | stop 27121 (19 pts) | TP 1R 27159 (19 pts) | risk $266.00 (replaced previous)
+2026-11-06 12:40:00  Entry filled: LONG 1 @ 27140.00 | stop 27121.00 (19 pts) | target 27159.00 (19 pts)
