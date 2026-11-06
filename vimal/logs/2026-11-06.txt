@@ -102,3 +102,4 @@
 2026-11-06 06:30:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-06 06:30:00  Entry filled: LONG 1 @ 26925.25 | stop 26910.50 (14.75 pts) | target 26940.00 (14.75 pts)
 2026-11-06 06:35:00  In trade: LONG 10 @ 26925.25 | stop 26910.50 (14.75 pts) | target 26940.00 (14.75 pts) | open P&L +$195.00
+2026-11-06 06:35:00  Trade closed: TP +$295.00 | +14.75 pts (Profit target @ 26940)
