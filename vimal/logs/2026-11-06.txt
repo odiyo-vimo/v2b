@@ -35,3 +35,4 @@
 2026-11-06 02:15:00  Skipped: signal bar is a pin bar.
 2026-11-06 02:20:00  No signal: NQ 12-26 volume 1360 <= previous 1734
 2026-11-06 02:20:00  Pending entry not filled after 3 bars, cancelling.
+2026-11-06 02:25:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
