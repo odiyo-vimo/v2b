@@ -253,3 +253,4 @@
 2026-11-06 17:50:00  No signal: NQ 12-26 volume 5936 <= previous 6617
 2026-11-06 17:50:00  Pending entry not filled after 3 bars, cancelling.
 2026-11-06 17:55:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
+2026-11-06 18:00:00  No signal: NQ 12-26 volume 6005 <= previous 7793
