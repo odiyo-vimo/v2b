@@ -297,3 +297,4 @@
 2026-11-06 20:25:00  Trade closed: TP +$275.50 | +17.22 pts (Profit target @ 27180.5)
 2026-11-06 20:30:00  Skipped (ATR mode): volume rose but the candle (high - low) 45 pts is not bigger than the previous candle's 45 pts.
 2026-11-06 20:35:00  No signal: NQ 12-26 volume 3853 <= previous 4085
+2026-11-06 20:40:00  SHORT 9 @ 27180.5 | stop 27196.5 (16 pts) | TP 1R 27164.5 (16 pts) | risk $288.00
