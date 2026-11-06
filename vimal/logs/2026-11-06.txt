@@ -115,3 +115,4 @@
 2026-11-06 07:15:00  No signal: NQ 12-26 volume 639 <= previous 1207
 2026-11-06 07:20:00  No signal: NQ 12-26 volume 577 <= previous 639
 2026-11-06 07:25:00  No signal: NQ 12-26 volume 527 <= previous 577
+2026-11-06 07:30:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
