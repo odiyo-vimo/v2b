@@ -127,3 +127,4 @@
 2026-11-06 08:10:00  In trade: LONG 10 @ 26970.50 | stop 26956.25 (14.25 pts) | target 26984.75 (14.25 pts) | open P&L -$60.00
 2026-11-06 08:10:00  Trade closed: SL -$291.00 | -14.55 pts (Stop loss @ 26955.75)
 2026-11-06 08:15:00  LONG 7 @ 26956.5 | stop 26935.25 (21.25 pts) | TP 1R 26977.75 (21.25 pts) | risk $297.50
+2026-11-06 08:20:00  No signal: NQ 12-26 volume 690 <= previous 1389
