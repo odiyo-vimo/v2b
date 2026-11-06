@@ -275,3 +275,4 @@
 2026-11-06 19:30:00  Trade closed: TP +$294.00 | +24.5 pts (Profit target @ 27171.75)
 2026-11-06 19:35:00  No signal: NQ 12-26 volume 2982 <= previous 2989
 2026-11-06 19:40:00  No signal: NQ 12-26 volume 2819 <= previous 2982
+2026-11-06 19:45:00  No signal: bullish bar but 'Allow longs' is OFF in settings.
