@@ -99,3 +99,4 @@
 2026-11-06 06:15:00  Trade closed: SL -$275.00 | -13.75 pts (Stop loss @ 26949.25)
 2026-11-06 06:20:00  LONG 10 @ 26925.25 | stop 26910.5 (14.75 pts) | TP 1R 26940 (14.75 pts) | risk $295.00
 2026-11-06 06:25:00  No signal: NQ 12-26 volume 470 <= previous 865
+2026-11-06 06:30:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
