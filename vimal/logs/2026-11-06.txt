@@ -76,3 +76,4 @@
 2026-11-06 05:00:00  In trade: SHORT 9 @ 27023.25 | stop 27038.50 (15.28 pts) | target 27007.50 (15.72 pts) | open P&L -$0.50
 2026-11-06 05:00:00  Trade closed: SL -$277.50 | -15.42 pts (Stop loss @ 27038.5)
 2026-11-06 05:05:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
+2026-11-06 05:10:00  No signal: NQ 12-26 volume 632 <= previous 1140
