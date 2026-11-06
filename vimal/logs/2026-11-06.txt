@@ -142,3 +142,5 @@
 2026-11-06 09:05:00  LONG 5 @ 27056.25 | stop 27027.5 (28.75 pts) | TP 1R 27085 (28.75 pts) | risk $287.50
 2026-11-06 09:10:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-06 09:15:00  No signal: NQ 12-26 volume 1299 <= previous 2435
+2026-11-06 09:20:00  No signal: NQ 12-26 volume 1169 <= previous 1299
+2026-11-06 09:20:00  Pending entry not filled after 3 bars, cancelling.
