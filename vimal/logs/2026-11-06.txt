@@ -27,3 +27,5 @@
 2026-11-06 01:40:00  No signal: NQ 12-26 volume 1241 <= previous 1579
 2026-11-06 01:45:00  No signal: NQ 12-26 volume 1186 <= previous 1241
 2026-11-06 01:50:00  No signal: NQ 12-26 volume 1088 <= previous 1186
+2026-11-06 01:55:00  Liquidity: swept Swing H 26993.75 and closed beyond it -> breakout LONG allowed.
+2026-11-06 01:55:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
