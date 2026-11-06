@@ -175,3 +175,5 @@
 2026-11-06 11:20:00  No signal: range 18.75 below minimum.
 2026-11-06 11:25:00  LONG 8 @ 27103.25 | stop 27085 (18.25 pts) | TP 1R 27121.5 (18.25 pts) | risk $292.00
 2026-11-06 11:30:00  No signal: range 21.75 below minimum.
+2026-11-06 11:35:00  Liquidity: swept Swing H 27154.75 and closed beyond it -> breakout LONG allowed.
+2026-11-06 11:35:00  Skipped: signal bar is a pin bar.
