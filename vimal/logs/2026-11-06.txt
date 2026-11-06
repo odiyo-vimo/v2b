@@ -273,3 +273,4 @@
 2026-11-06 19:25:00  Entry filled: SHORT 1 @ 27196.25 | stop 27220.75 (24.5 pts) | target 27171.75 (24.5 pts)
 2026-11-06 19:30:00  In trade: SHORT 6 @ 27196.25 | stop 27220.75 (24.5 pts) | target 27171.75 (24.5 pts) | open P&L +$216.00
 2026-11-06 19:30:00  Trade closed: TP +$294.00 | +24.5 pts (Profit target @ 27171.75)
+2026-11-06 19:35:00  No signal: NQ 12-26 volume 2982 <= previous 2989
