@@ -47,3 +47,4 @@
 2026-11-06 02:55:00  Entry filled: LONG 2 @ 27093.25 | stop 27064.50 (28.75 pts) | target 27122.00 (28.75 pts)
 2026-11-06 03:00:00  In trade: LONG 5 @ 27093.25 | stop 27064.50 (28.75 pts) | target 27122.00 (28.75 pts) | open P&L +$57.50
 2026-11-06 03:00:00  Trade closed: TP +$287.50 | +28.75 pts (Profit target @ 27122)
+2026-11-06 03:05:00  Skipped: signal bar is a pin bar.
