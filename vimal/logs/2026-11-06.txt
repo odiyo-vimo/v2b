@@ -32,3 +32,4 @@
 2026-11-06 02:00:00  Skipped: bearish bar closed 34.4% of the way down, needs 50% or more.
 2026-11-06 02:05:00  LONG 5 @ 26975.25 | stop 26946.25 (29 pts) | TP 1R 27004.25 (29 pts) | risk $290.00
 2026-11-06 02:10:00  No signal: NQ 12-26 volume 1035 <= previous 1821
+2026-11-06 02:15:00  Skipped: signal bar is a pin bar.
