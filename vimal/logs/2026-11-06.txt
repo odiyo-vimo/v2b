@@ -129,3 +129,5 @@
 2026-11-06 08:15:00  LONG 7 @ 26956.5 | stop 26935.25 (21.25 pts) | TP 1R 26977.75 (21.25 pts) | risk $297.50
 2026-11-06 08:20:00  No signal: NQ 12-26 volume 690 <= previous 1389
 2026-11-06 08:25:00  Skipped: swept Swing H 27039.00 but closed back below it at 27038.25 (no breakout, no pin bar).
+2026-11-06 08:30:00  No signal: NQ 12-26 volume 1110 <= previous 1173
+2026-11-06 08:30:00  Pending entry not filled after 3 bars, cancelling.
