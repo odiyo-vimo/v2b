@@ -37,3 +37,4 @@
 2026-11-06 02:20:00  Pending entry not filled after 3 bars, cancelling.
 2026-11-06 02:25:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-06 02:30:00  No signal: NQ 12-26 volume 1518 <= previous 2087
+2026-11-06 02:35:00  No signal: NQ 12-26 volume 1410 <= previous 1518
