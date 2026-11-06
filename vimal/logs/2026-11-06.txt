@@ -364,3 +364,4 @@
 2026-11-06 20:55:00  Price nearly filled, then reached the target 27090.25 without an entry: cancelling pending entry.
 2026-11-06 21:00:00  Skipped (ATR mode): volume rose but the candle (high - low) 57.25 pts is not bigger than the previous candle's 72.75 pts.
 2026-11-06 21:05:00  No signal: NQ 12-26 volume 6629 <= previous 18050
+2026-11-06 21:10:00  No signal: NQ 12-26 volume 2305 <= previous 6629
