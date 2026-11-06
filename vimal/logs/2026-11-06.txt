@@ -166,3 +166,4 @@
 2026-11-06 10:45:00  No signal: NQ 12-26 volume 686 <= previous 994
 2026-11-06 10:45:00  Entry filled: LONG 1 @ 27108.25 | stop 27091.00 (17.25 pts) | target 27125.50 (17.25 pts)
 2026-11-06 10:45:00  Trade closed: TP +$280.00 | +17.5 pts (Profit target @ 27125.5)
+2026-11-06 10:50:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
