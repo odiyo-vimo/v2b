@@ -50,3 +50,4 @@
 2026-11-06 03:05:00  Skipped: signal bar is a pin bar.
 2026-11-06 03:10:00  No signal: NQ 12-26 volume 897 <= previous 983
 2026-11-06 03:15:00  Skipped (Exclusive mode): short needs the previous bar to be green, it was red.
+2026-11-06 03:20:00  No signal: NQ 12-26 volume 1218 <= previous 1373
