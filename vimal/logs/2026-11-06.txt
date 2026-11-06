@@ -282,3 +282,4 @@
 2026-11-06 19:55:00  Trade closed: SL -$273.00 | -22.75 pts (Stop loss @ 27195.75)
 2026-11-06 20:00:00  No signal: bullish bar but 'Allow longs' is OFF in settings.
 2026-11-06 20:05:00  Skipped (ATR mode): volume rose but the candle (high - low) 34.75 pts is not bigger than the previous candle's 74.5 pts.
+2026-11-06 20:05:00  Entry filled: LONG 2 @ 27165.75 | stop 27141.50 (24.25 pts) | target 27190.00 (24.25 pts)
