@@ -223,3 +223,4 @@
 2026-11-06 14:25:00  SHORT 12 @ 27164 | stop 27175.75 (11.75 pts) | TP 1R 27152.25 (11.75 pts) | risk $282.00
 2026-11-06 14:25:00  Entry filled: SHORT 1 @ 27165.00 | stop 27175.75 (10.75 pts) | target 27152.25 (12.75 pts)
 2026-11-06 15:45:00  No signal: NQ 12-26 volume 9194 <= previous 11235
+2026-11-06 15:50:00  No signal: NQ 12-26 volume 8772 <= previous 9194
