@@ -370,3 +370,4 @@
 2026-11-06 21:25:00  No signal: NQ 12-26 volume 790 <= previous 1002
 2026-11-06 21:30:00  SHORT 12 @ 27093.75 | stop 27105.75 (12 pts) | TP 1R 27081.75 (12 pts) | risk $288.00
 2026-11-06 21:35:00  No signal: NQ 12-26 volume 849 <= previous 1178
+2026-11-06 21:35:00  Price came within 10% of the entry (27092.50) without filling.
