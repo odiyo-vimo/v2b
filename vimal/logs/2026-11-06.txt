@@ -29,3 +29,4 @@
 2026-11-06 01:50:00  No signal: NQ 12-26 volume 1088 <= previous 1186
 2026-11-06 01:55:00  Liquidity: swept Swing H 26993.75 and closed beyond it -> breakout LONG allowed.
 2026-11-06 01:55:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
+2026-11-06 02:00:00  Skipped: bearish bar closed 34.4% of the way down, needs 50% or more.
