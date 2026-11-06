@@ -219,3 +219,4 @@
 2026-11-06 14:05:00  Trade closed: SL -$252.00 | -31.5 pts (Stop loss @ 27084)
 2026-11-06 14:10:00  No signal: NQ 12-26 volume 5275 <= previous 6449
 2026-11-06 14:15:00  No signal: NQ 12-26 volume 4018 <= previous 5275
+2026-11-06 14:20:00  No signal: NQ 12-26 volume 2601 <= previous 4018
