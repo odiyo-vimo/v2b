@@ -257,3 +257,4 @@
 2026-11-06 18:05:00  No signal: NQ 12-26 volume 5497 <= previous 6005
 2026-11-06 18:10:00  No signal: NQ 12-26 volume 4896 <= previous 5497
 2026-11-06 18:15:00  No signal: NQ 12-26 volume 3443 <= previous 4896
+2026-11-06 18:20:00  Skipped: bearish bar closed 47.3% of the way down, needs 50% or more.
