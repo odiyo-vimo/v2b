@@ -85,3 +85,4 @@
 2026-11-06 05:35:00  LONG 8 @ 26920 | stop 26901.75 (18.25 pts) | TP 1R 26938.25 (18.25 pts) | risk $292.00 | reversal: swept Swing L 26918.00 and rejected it (pin bar)
 2026-11-06 05:40:00  Newer signal replaces pending entry at 26920.
 2026-11-06 05:40:00  LONG 5 @ 26972.5 | stop 26946.25 (26.25 pts) | TP 1R 26998.75 (26.25 pts) | risk $262.50 (replaced previous)
+2026-11-06 05:40:00  Entry filled: LONG 1 @ 26972.50 | stop 26946.25 (26.25 pts) | target 26998.75 (26.25 pts)
