@@ -73,3 +73,4 @@
 2026-11-06 04:50:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-06 04:55:00  SHORT 9 @ 27023 | stop 27038.5 (15.5 pts) | TP 1R 27007.5 (15.5 pts) | risk $279.00
 2026-11-06 04:55:00  Entry filled: SHORT 8 @ 27023.25 | stop 27038.50 (15.25 pts) | target 27007.50 (15.75 pts)
+2026-11-06 05:00:00  In trade: SHORT 9 @ 27023.25 | stop 27038.50 (15.28 pts) | target 27007.50 (15.72 pts) | open P&L -$0.50
