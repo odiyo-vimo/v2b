@@ -138,3 +138,4 @@
 2026-11-06 08:55:00  LONG 10 @ 27050.75 | stop 27036.75 (14 pts) | TP 1R 27064.75 (14 pts) | risk $280.00
 2026-11-06 08:55:00  Entry filled: LONG 2 @ 27050.75 | stop 27036.75 (14 pts) | target 27064.75 (14 pts)
 2026-11-06 09:00:00  In trade: LONG 10 @ 27050.75 | stop 27036.75 (14 pts) | target 27064.75 (14 pts) | open P&L -$250.00
+2026-11-06 09:00:00  Trade closed: SL -$280.50 | -14.03 pts (Stop loss @ 27036.75)
