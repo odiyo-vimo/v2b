@@ -30,3 +30,4 @@
 2026-11-06 01:55:00  Liquidity: swept Swing H 26993.75 and closed beyond it -> breakout LONG allowed.
 2026-11-06 01:55:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
 2026-11-06 02:00:00  Skipped: bearish bar closed 34.4% of the way down, needs 50% or more.
+2026-11-06 02:05:00  LONG 5 @ 26975.25 | stop 26946.25 (29 pts) | TP 1R 27004.25 (29 pts) | risk $290.00
