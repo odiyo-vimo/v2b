@@ -292,3 +292,5 @@
 2026-11-06 20:20:00  SHORT 8 @ 27197.5 | stop 27214.5 (17 pts) | TP 1R 27180.5 (17 pts) | risk $272.00
 2026-11-06 20:20:00  Price came within 10% of the entry (27195.75) without filling.
 2026-11-06 20:20:00  Entry filled: SHORT 1 @ 27197.50 | stop 27214.50 (17 pts) | target 27180.50 (17 pts)
+2026-11-06 20:25:00  Break-even: 90% of the way to the target reached, stop moved to 27197.5
+2026-11-06 20:25:00  In trade: SHORT 8 @ 27197.50 | stop 27197.50 (0 pts) | target 27180.50 (17 pts) | open P&L +$148.00
