@@ -291,3 +291,4 @@
 2026-11-06 20:15:00  Trade closed: SL -$285.00 | -28.5 pts (Stop loss @ 27163)
 2026-11-06 20:20:00  SHORT 8 @ 27197.5 | stop 27214.5 (17 pts) | TP 1R 27180.5 (17 pts) | risk $272.00
 2026-11-06 20:20:00  Price came within 10% of the entry (27195.75) without filling.
+2026-11-06 20:20:00  Entry filled: SHORT 1 @ 27197.50 | stop 27214.50 (17 pts) | target 27180.50 (17 pts)
