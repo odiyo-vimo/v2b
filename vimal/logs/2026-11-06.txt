@@ -13,3 +13,5 @@
 2026-11-06 00:45:00  SHORT 7 @ 26959.75 | stop 26980.25 (20.5 pts) | TP 1R 26939.25 (20.5 pts) | risk $287.00
 2026-11-06 00:50:00  No signal: NQ 12-26 volume 1868 <= previous 2455
 2026-11-06 00:55:00  No signal: NQ 12-26 volume 1750 <= previous 1868
+2026-11-06 01:00:00  No signal: NQ 12-26 volume 1263 <= previous 1750
+2026-11-06 01:00:00  Pending entry not filled after 3 bars, cancelling.
