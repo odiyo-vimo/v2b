@@ -144,3 +144,4 @@
 2026-11-06 09:15:00  No signal: NQ 12-26 volume 1299 <= previous 2435
 2026-11-06 09:20:00  No signal: NQ 12-26 volume 1169 <= previous 1299
 2026-11-06 09:20:00  Pending entry not filled after 3 bars, cancelling.
+2026-11-06 09:25:00  Skipped: swept Swing H 27180.50 but closed back below it at 27161.25 (no breakout, no pin bar).
