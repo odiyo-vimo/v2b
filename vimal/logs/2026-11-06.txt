@@ -186,3 +186,4 @@
 2026-11-06 11:55:00  Trade closed: TP +$261.00 | +21.75 pts (Profit target @ 27173.25)
 2026-11-06 12:00:00  Skipped: signal bar is a pin bar.
 2026-11-06 12:05:00  Skipped: signal bar is a pin bar.
+2026-11-06 12:10:00  No signal: NQ 12-26 volume 1270 <= previous 1719
