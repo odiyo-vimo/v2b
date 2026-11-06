@@ -260,3 +260,4 @@
 2026-11-06 18:20:00  Skipped: bearish bar closed 47.3% of the way down, needs 50% or more.
 2026-11-06 18:25:00  No signal: NQ 12-26 volume 3549 <= previous 3557
 2026-11-06 18:30:00  No signal: NQ 12-26 volume 3077 <= previous 3549
+2026-11-06 18:35:00  Skipped (Exclusive mode): long needs the previous bar to be red, it was green.
